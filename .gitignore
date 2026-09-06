@@ -9,6 +9,7 @@
 
 # next.js
 /.next/
+/.next-preview/
 /out/
 
 # production
@@ -35,3 +36,9 @@ next-env.d.ts
 
 # scratch / temp files
 scratch/
+
+# deployment packages and archives
+/deploy-package/
+deploy.zip
+deploy.tar.gz
+

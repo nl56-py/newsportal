@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Output standalone build for CloudLinux / LiteSpeed / DirectAdmin Phusion Passenger
   output: "standalone",
+  distDir: process.env.NEXT_DIST_DIR || ".next",
 
   // Disable dynamic Sharp image optimization to prevent CPU/RAM exhaustion on shared hosting
   images: {

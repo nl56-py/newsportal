@@ -152,3 +152,41 @@ export interface AdItem {
   targetBlank?: boolean;
   active: boolean;
 }
+
+export interface CategoryItem {
+  id: string;
+  name: string;
+  slug: string;
+  count?: number;
+  description?: string;
+  order?: number;
+}
+
+export interface MediaItem {
+  id: string;
+  url: string;
+  title: string;
+  caption?: string;
+  photographer?: string;
+  uploadedAt: string;
+  fileSize?: string;
+  dimensions?: string;
+}
+
+export interface SiteSettings {
+  siteTitle: string;
+  tagline: string;
+  siteUrl: string;
+  adminEmail: string;
+  pressCouncilRegNo: string;
+  editorName: string;
+  contactPhone: string;
+  contactAddress: string;
+  facebookUrl: string;
+  twitterUrl: string;
+  youtubeUrl: string;
+  googleAnalyticsId: string;
+  breakingNewsEnabled: boolean;
+}
+
+

@@ -8,6 +8,8 @@ export async function GET(request: Request) {
   const q = searchParams.get("q")?.toLowerCase();
   const category = searchParams.get("category");
   const id = searchParams.get("id");
+  const pageParam = searchParams.get("page");
+  const limitParam = searchParams.get("limit");
 
   if (id) {
     const article = db.getArticleById(id);
@@ -30,6 +32,30 @@ export async function GET(request: Request) {
     );
   }
 
+  const total = articles.length;
+
+  // Pagination support
+  if (pageParam || limitParam) {
+    const page = Math.max(1, parseInt(pageParam || "1", 10));
+    const limit = Math.max(1, parseInt(limitParam || "15", 10));
+    const totalPages = Math.ceil(total / limit) || 1;
+    const startIndex = (page - 1) * limit;
+    const paginated = articles.slice(startIndex, startIndex + limit);
+
+    return NextResponse.json({
+      articles: paginated,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    });
+  }
+
+  // Fallback: Return raw array for legacy callers
   return NextResponse.json(articles);
 }
 
@@ -77,9 +103,9 @@ export async function POST(request: Request) {
       authors.find((a) => a.id === authorId) ||
       authors[0] || {
         id: "auth-default",
-        name: "नेपाल पाटी संवाददाता",
+        name: "सवाल नेपाल",
         avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&q=80",
-        role: "विशेष संवाददाता",
+        role: "सम्पादकीय टिम",
       };
 
     const now = new Date();

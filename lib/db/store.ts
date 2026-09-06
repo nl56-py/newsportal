@@ -1,4 +1,12 @@
-import { NewsArticle, Author, AdSlotDefinition, VideoStory } from "../types";
+import {
+  NewsArticle,
+  Author,
+  AdSlotDefinition,
+  VideoStory,
+  CategoryItem,
+  MediaItem,
+  SiteSettings,
+} from "../types";
 import { MOCK_ARTICLES, AUTHORS, BREAKING_NEWS_LIST, MOCK_VIDEOS } from "../mock-data";
 import { AD_SLOTS_CONFIG } from "../ads-config";
 
@@ -21,18 +29,69 @@ export interface AdminUser {
 
 export interface DatabaseState {
   articles: NewsArticle[];
+  categories: CategoryItem[];
+  media: MediaItem[];
   authors: Author[];
   ads: { [key: string]: AdSlotDefinition };
   breakingNews: BreakingNewsItem[];
   videos: VideoStory[];
   adminUsers: AdminUser[];
+  siteSettings: SiteSettings;
   analytics: {
     totalImpressions: number;
     totalClicks: number;
   };
 }
 
+const DEFAULT_CATEGORIES: CategoryItem[] = [
+  { id: "cat-samachar", name: "मुख्य खबर", slug: "samachar", count: 12846, order: 1 },
+  { id: "cat-rajniti", name: "राजनीति", slug: "rajniti", count: 2230, order: 2 },
+  { id: "cat-economy", name: "अर्थ / बजार", slug: "economy", count: 2994, order: 3 },
+  { id: "cat-province", name: "प्रदेश / राष्ट्रिय", slug: "province", count: 37973, order: 4 },
+  { id: "cat-sports", name: "खेलकुद", slug: "sports", count: 1273, order: 5 },
+  { id: "cat-samaj", name: "समाज", slug: "samaj", count: 753, order: 6 },
+  { id: "cat-lifestyle", name: "जीवनशैली", slug: "lifestyle", count: 2166, order: 7 },
+  { id: "cat-entertainment", name: "मनोरञ्जन", slug: "entertainment", count: 2998, order: 8 },
+  { id: "cat-health", name: "स्वास्थ्य", slug: "health", count: 2468, order: 9 },
+  { id: "cat-tech", name: "सूचना-प्रविधि", slug: "tech", count: 705, order: 10 },
+  { id: "cat-blog", name: "विचार / ब्लग", slug: "blog", count: 569, order: 11 },
+  { id: "cat-international", name: "अन्तर्राष्ट्रिय", slug: "international", count: 4497, order: 12 },
+  { id: "cat-video", name: "भिडियो", slug: "video", count: 1120, order: 13 },
+  { id: "cat-different-world", name: "अनौठा कुरा", slug: "different-world", count: 3066, order: 14 },
+];
+
+const DEFAULT_SETTINGS: SiteSettings = {
+  siteTitle: "सवाल नेपाल | Sawal Nepal",
+  tagline: "सत्य, तथ्य र निष्पक्ष समाचार तथा मनोरञ्जनको अग्रणी डिजिटल पत्रिका",
+  siteUrl: "https://www.sawalnepal.com",
+  adminEmail: "news@sawalnepal.com",
+  pressCouncilRegNo: "दर्ता नं. २१२/०७४-७५",
+  editorName: "सम्पादकीय टिम (सवाल नेपाल)",
+  contactPhone: "+977-9852678888, 023-580123",
+  contactAddress: "दमक-८, झापा, कोशी प्रदेश, नेपाल",
+  facebookUrl: "https://facebook.com/sawaalnepal",
+  twitterUrl: "https://twitter.com/sawalnepal",
+  youtubeUrl: "https://youtube.com/@sawalnepal",
+  googleAnalyticsId: "G-XXXXXXXXXX",
+  breakingNewsEnabled: true,
+};
+
 function getDefaultState(): DatabaseState {
+  let seededArticles: NewsArticle[] = [...MOCK_ARTICLES];
+  try {
+    const fs = require("fs");
+    const path = require("path");
+    const seededFile = path.join(process.cwd(), "data", "seeded_articles.json");
+    if (fs.existsSync(seededFile)) {
+      const parsed = JSON.parse(fs.readFileSync(seededFile, "utf-8"));
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        seededArticles = parsed;
+      }
+    }
+  } catch (e) {
+    // fallback to mock
+  }
+
   const breakingItems: BreakingNewsItem[] = BREAKING_NEWS_LIST.map((b, i) => ({
     id: `brk-${i + 1}`,
     headline: b,
@@ -40,12 +99,29 @@ function getDefaultState(): DatabaseState {
     createdAt: new Date().toISOString(),
   }));
 
+  const initialMedia: MediaItem[] = seededArticles
+    .filter((a) => a.coverImage && a.coverImage.startsWith("http"))
+    .slice(0, 30)
+    .map((a, idx) => ({
+      id: `med-${idx + 1}`,
+      url: a.coverImage,
+      title: a.title,
+      caption: a.imageCaption || a.title,
+      photographer: a.imagePhotographer || "सवाल नेपाल",
+      uploadedAt: a.publishedAt || new Date().toISOString(),
+      fileSize: "245 KB",
+      dimensions: "1200x650",
+    }));
+
   return {
-    articles: [...MOCK_ARTICLES],
+    articles: seededArticles,
+    categories: DEFAULT_CATEGORIES,
+    media: initialMedia,
     authors: Object.values(AUTHORS),
     ads: { ...AD_SLOTS_CONFIG },
     breakingNews: breakingItems,
     videos: [...MOCK_VIDEOS],
+    siteSettings: DEFAULT_SETTINGS,
     adminUsers: [
       {
         id: "usr-admin-01",
@@ -54,6 +130,22 @@ function getDefaultState(): DatabaseState {
         name: "सम्पादक (Editor-in-Chief)",
         email: "admin@sawalnepal.com",
         role: "super_admin",
+      },
+      {
+        id: "usr-admin-02",
+        username: "kedar",
+        password: "Damak123@#",
+        name: "केदार अधिकारी",
+        email: "kpoudel89@gmail.com",
+        role: "super_admin",
+      },
+      {
+        id: "usr-admin-03",
+        username: "sudip",
+        password: "Damak123@#",
+        name: "Sudip Adhikari",
+        email: "sudip.himshikhartv@gmail.com",
+        role: "editor",
       },
     ],
     analytics: {
@@ -96,36 +188,38 @@ export class JsonDatabase {
         }
 
         if (fs.existsSync(DB_FILE)) {
-          const raw = fs.readFileSync(DB_FILE, "utf-8");
-          const parsed: DatabaseState = JSON.parse(raw);
-
-          // Ensure videos array exists in parsed state
-          if (!parsed.videos || parsed.videos.length === 0) {
-            parsed.videos = [...MOCK_VIDEOS];
+          const raw = fs.readFileSync(DB_FILE, "utf-8").trim();
+          if (raw) {
+            try {
+              const parsed: DatabaseState = JSON.parse(raw);
+              if (parsed && typeof parsed === "object") {
+                if (!parsed.categories) parsed.categories = DEFAULT_CATEGORIES;
+                if (!parsed.media) parsed.media = [];
+                if (!parsed.siteSettings) parsed.siteSettings = DEFAULT_SETTINGS;
+                globalDbState = parsed;
+                return parsed;
+              }
+            } catch (jsonErr) {
+              console.warn("JSON parse error in portal-db.json, recreating default state:", jsonErr);
+            }
           }
-
-          // Check if Sawal Nepal articles are present, merge if missing
-          const existingIds = new Set(parsed.articles.map((a) => a.id));
-          const sawalArticlesToAdd = MOCK_ARTICLES.filter((a) => !existingIds.has(a.id));
-          if (sawalArticlesToAdd.length > 0) {
-            parsed.articles = [...sawalArticlesToAdd, ...parsed.articles];
-          }
-
-          globalDbState = parsed;
-          return parsed;
         }
+        const defaultState = getDefaultState();
+        fs.writeFileSync(DB_FILE, JSON.stringify(defaultState, null, 2), "utf-8");
+        globalDbState = defaultState;
+        return defaultState;
       } catch (err) {
-        console.error("[Database] Error loading file:", err);
+        console.error("JsonDatabase load error:", err);
       }
     }
 
     const defaultState = getDefaultState();
     globalDbState = defaultState;
-    this.saveDirect(defaultState);
     return defaultState;
   }
 
-  private saveDirect(state: DatabaseState): void {
+  public save(): void {
+    globalDbState = this.state;
     if (typeof window === "undefined") {
       try {
         const fs = require("fs");
@@ -136,16 +230,11 @@ export class JsonDatabase {
         if (!fs.existsSync(DB_DIR)) {
           fs.mkdirSync(DB_DIR, { recursive: true });
         }
-        fs.writeFileSync(DB_FILE, JSON.stringify(state, null, 2), "utf-8");
+        fs.writeFileSync(DB_FILE, JSON.stringify(this.state, null, 2), "utf-8");
       } catch (err) {
-        console.error("[Database] Error saving file:", err);
+        console.error("JsonDatabase save error:", err);
       }
     }
-  }
-
-  public save(): void {
-    globalDbState = this.state;
-    this.saveDirect(this.state);
   }
 
   public getState(): DatabaseState {
@@ -217,8 +306,40 @@ export class JsonDatabase {
 
   public deleteArticle(id: string): boolean {
     const initialLen = this.state.articles.length;
-    this.state.articles = this.state.articles.filter((a) => a.id !== id);
+    this.state.articles = this.state.articles.filter((a) => a.id !== id && a.numericId?.toString() !== id);
     if (this.state.articles.length !== initialLen) {
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  // --- Categories CRUD ---
+  public getCategories(): CategoryItem[] {
+    return this.state.categories || DEFAULT_CATEGORIES;
+  }
+
+  public insertCategory(cat: CategoryItem): CategoryItem {
+    if (!this.state.categories) this.state.categories = [...DEFAULT_CATEGORIES];
+    this.state.categories.push(cat);
+    this.save();
+    return cat;
+  }
+
+  public updateCategory(id: string, updates: Partial<CategoryItem>): CategoryItem | null {
+    if (!this.state.categories) this.state.categories = [...DEFAULT_CATEGORIES];
+    const idx = this.state.categories.findIndex((c) => c.id === id || c.slug === id);
+    if (idx === -1) return null;
+    this.state.categories[idx] = { ...this.state.categories[idx], ...updates };
+    this.save();
+    return this.state.categories[idx];
+  }
+
+  public deleteCategory(id: string): boolean {
+    if (!this.state.categories) return false;
+    const initial = this.state.categories.length;
+    this.state.categories = this.state.categories.filter((c) => c.id !== id && c.slug !== id);
+    if (this.state.categories.length !== initial) {
       this.save();
       return true;
     }
@@ -338,6 +459,83 @@ export class JsonDatabase {
     return this.state.authors;
   }
 
+  public insertAuthor(author: Author): Author {
+    this.state.authors.push(author);
+    this.save();
+    return author;
+  }
+
+  public updateAuthor(id: string, updates: Partial<Author>): Author | null {
+    const idx = this.state.authors.findIndex((a) => a.id === id);
+    if (idx === -1) return null;
+    this.state.authors[idx] = { ...this.state.authors[idx], ...updates };
+    this.save();
+    return this.state.authors[idx];
+  }
+
+  public deleteAuthor(id: string): boolean {
+    const initial = this.state.authors.length;
+    this.state.authors = this.state.authors.filter((a) => a.id !== id);
+    if (this.state.authors.length !== initial) {
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  // --- Site Settings ---
+  public getSiteSettings(): SiteSettings {
+    return this.state.siteSettings || DEFAULT_SETTINGS;
+  }
+
+  public updateSiteSettings(settings: Partial<SiteSettings>): SiteSettings {
+    this.state.siteSettings = {
+      ...this.getSiteSettings(),
+      ...settings,
+    };
+    this.save();
+    return this.state.siteSettings;
+  }
+
+  // --- Media Library CRUD ---
+  public getMedia(): MediaItem[] {
+    if (!this.state.media || this.state.media.length === 0) {
+      this.state.media = (this.state.articles || [])
+        .filter((a) => a.coverImage && a.coverImage.startsWith("http"))
+        .slice(0, 50)
+        .map((a, idx) => ({
+          id: `med-${idx + 1}`,
+          url: a.coverImage,
+          title: a.title,
+          caption: a.imageCaption || a.title,
+          photographer: a.imagePhotographer || "सवाल नेपाल",
+          uploadedAt: a.publishedAt || new Date().toISOString(),
+          fileSize: "245 KB",
+          dimensions: "1200x650",
+        }));
+      this.save();
+    }
+    return this.state.media;
+  }
+
+  public insertMedia(item: MediaItem): MediaItem {
+    if (!this.state.media) this.state.media = [];
+    this.state.media.unshift(item);
+    this.save();
+    return item;
+  }
+
+  public deleteMedia(id: string): boolean {
+    if (!this.state.media) return false;
+    const initial = this.state.media.length;
+    this.state.media = this.state.media.filter((m) => m.id !== id);
+    if (this.state.media.length !== initial) {
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
   // --- Admin Auth ---
   public findAdminByUsername(username: string): AdminUser | undefined {
     return this.state.adminUsers.find((u) => u.username === username);
@@ -345,3 +543,4 @@ export class JsonDatabase {
 }
 
 export const db = JsonDatabase.getInstance();
+

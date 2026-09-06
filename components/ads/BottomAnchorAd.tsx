@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { getAdSlotByPosition } from "@/lib/ads-config";
 import { X } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export const BottomAnchorAd: React.FC = () => {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
   const slot = getAdSlotByPosition("Bottom_Sticky_Anchor");
 
@@ -18,7 +20,7 @@ export const BottomAnchorAd: React.FC = () => {
     }
   }, [slot]);
 
-  if (!isVisible || !slot?.currentAd?.active) return null;
+  if (pathname === '/' || pathname.startsWith('/admin') || !isVisible || !slot?.currentAd?.active) return null;
 
   const currentAd = slot.currentAd;
 

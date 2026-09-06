@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Mukta, Martel, Inter } from "next/font/google";
 import "./globals.css";
+import "./sawal-home.css";
+import { getHomepageContent } from "@/lib/homepage";
 import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
 import { BottomAnchorAd } from "@/components/ads/BottomAnchorAd";
@@ -87,6 +89,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const homepage = getHomepageContent();
   return (
     <html
       lang="ne"
@@ -94,7 +97,7 @@ export default function RootLayout({
     >
       <body className="flex flex-col min-h-screen font-mukta bg-[#f4f6f8] text-slate-900 selection:bg-sawal-red selection:text-white">
         {/* Master Header */}
-        <Header />
+        <Header recent={[...homepage.sections['ताजा समाचार'], ...homepage.sections['समाचार'].slice(3, 5)]} popular={homepage.sections['धेरै पढिएको']} />
 
         {/* Main Content Area */}
         <main className="flex-1 w-full">{children}</main>

@@ -7,10 +7,14 @@ import {
   LayoutDashboard,
   FileText,
   PlusCircle,
+  FolderTree,
+  Image as ImageIcon,
   Video,
   Megaphone,
   Zap,
+  Users,
   Database,
+  Settings,
   ExternalLink,
 } from "lucide-react";
 
@@ -23,12 +27,16 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ onClose }) => {
 
   const NAV_ITEMS = [
     { name: "ड्यासबोर्ड (Dashboard)", href: "/admin", icon: LayoutDashboard },
-    { name: "सबै समाचार (Articles)", href: "/admin/articles", icon: FileText },
+    { name: "सबै समाचार (All Articles)", href: "/admin/articles", icon: FileText },
     { name: "नयाँ समाचार लेख्नुहोस्", href: "/admin/articles/new", icon: PlusCircle },
+    { name: "श्रेणीहरू (Categories)", href: "/admin/categories", icon: FolderTree },
+    { name: "मिडिया लाइब्रेरी (Media)", href: "/admin/media", icon: ImageIcon },
     { name: "भिडियो व्यवस्थापन (Videos)", href: "/admin/videos", icon: Video },
     { name: "विज्ञापन व्यवस्थापन (Ads)", href: "/admin/ads", icon: Megaphone },
     { name: "ब्रेकिङ न्युज (Ticker)", href: "/admin/breaking", icon: Zap },
+    { name: "लेखक तथा टिम (Authors)", href: "/admin/authors", icon: Users },
     { name: "डाटाबेस व्यवस्थापन (DB)", href: "/admin/database", icon: Database },
+    { name: "साइट सेटिङ (Settings & SEO)", href: "/admin/settings", icon: Settings },
   ];
 
   return (
@@ -44,14 +52,14 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ onClose }) => {
               सवाल नेपाल
             </h2>
             <span className="text-[10px] text-amber-400 font-mono tracking-wider">
-              DYNAMIC CMS v2.0
+              WP-COMPATIBLE CMS
             </span>
           </div>
         </Link>
       </div>
 
       {/* Nav links */}
-      <div className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
+      <div className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         <span className="text-[11px] font-bold text-slate-500 uppercase px-3 tracking-wider">
           सामग्री नियन्त्रण (CMS MANAGEMENT)
         </span>
@@ -65,7 +73,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ onClose }) => {
               key={item.href}
               href={item.href}
               onClick={onClose}
-              className={`flex items-center space-x-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex items-center space-x-3 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
                 isActive
                   ? "bg-sawal-red text-white font-bold shadow-sm"
                   : "text-slate-300 hover:bg-slate-800 hover:text-white"
@@ -77,17 +85,17 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ onClose }) => {
           );
         })}
 
-        <div className="pt-4 border-t border-slate-800 my-2">
+        <div className="pt-3 border-t border-slate-800 my-2">
           <span className="text-[11px] font-bold text-slate-500 uppercase px-3 tracking-wider">
-            होस्टिङ र आर्किटेक्चर
+            cPanel MariaDB Sync
           </span>
           <div className="px-3 py-2 text-xs text-slate-400 leading-relaxed">
             <p className="flex items-center text-emerald-400 font-bold mb-1">
               <Database className="w-3.5 h-3.5 mr-1" />
-              DirectAdmin MariaDB / DA25
+              sawalne1_db1 Connected
             </p>
             <span className="text-[11px] text-slate-500">
-              Zero-config JSON Store + MySQL Ready
+              80,340+ Live WordPress Posts
             </span>
           </div>
         </div>
