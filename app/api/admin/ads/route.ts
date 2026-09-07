@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 
 export async function GET() {
@@ -21,6 +22,7 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Slot position not found" }, { status: 404 });
     }
 
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, slot: updated });
   } catch (err) {
     return NextResponse.json({ error: "Failed to update ad" }, { status: 500 });

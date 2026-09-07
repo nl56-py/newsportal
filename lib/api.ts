@@ -105,9 +105,9 @@ export async function getArticlesByCategory(
   const start = (page - 1) * limit;
   const sliced = filtered.slice(start, start + limit);
   return {
-    articles: sliced.length > 0 ? sliced : articles.slice(0, limit),
-    total: filtered.length || articles.length,
-    totalPages: Math.ceil((filtered.length || articles.length) / limit) || 1,
+    articles: sliced,
+    total: filtered.length,
+    totalPages: Math.ceil(filtered.length / limit) || 1,
   };
 }
 
@@ -162,7 +162,11 @@ export async function searchArticles(
       (a.tags && a.tags.some((t) => t.toLowerCase().includes(q))) ||
       (a.author && a.author.name.toLowerCase().includes(q));
 
-    return matchesQuery;
+    // Native date inputs use YYYY-MM-DD; interpret the full day in Nepal time.
+    const published = Date.parse(a.publishedAt);
+    const start = from && /^\d{4}-\d{2}-\d{2}$/.test(from) ? Date.parse(`${from}T00:00:00+05:45`) : NaN;
+    const end = to && /^\d{4}-\d{2}-\d{2}$/.test(to) ? Date.parse(`${to}T23:59:59.999+05:45`) : NaN;
+    return matchesQuery && (Number.isNaN(start) || published >= start) && (Number.isNaN(end) || published <= end);
   });
 }
 

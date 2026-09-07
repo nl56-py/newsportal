@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db/store";
 
 export async function GET() {
@@ -27,6 +28,7 @@ export async function POST(req: NextRequest) {
       socials: body.socials || {},
     });
 
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, author: newAuthor });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -41,6 +43,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const updated = db.updateAuthor(body.id, body);
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, author: updated });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -56,6 +59,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const deleted = db.deleteAuthor(id);
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: deleted });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

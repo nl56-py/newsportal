@@ -24,14 +24,14 @@ export const homepageBrand = {
 export const sectionSlugs: Record<string, string> = {
   'समाचार': 'samachar', 'धेरै पढिएको': 'popular', 'देश': 'province',
   'सूचना-प्रविधि': 'tech', 'ताजा समाचार': 'samachar', 'मनोरञ्जन': 'entertainment',
-  'फिचर': 'province', 'अर्थ': 'economy', 'अन्तर्वार्ता': 'interview',
+  'फिचर': 'feature', 'अर्थ': 'economy', 'अन्तर्वार्ता': 'interview',
   'विचार/ब्लग': 'blog', 'खेलकुद': 'sports', 'राजनीति': 'politics',
   'अन्तर्राष्ट्रिय': 'international', 'स्वास्थ्य': 'health',
   'विचित्र संसार': 'different-world', 'धर्म सस्कृति': 'religion', 'भिडियो': 'video',
 };
 
 export function referenceStory(story: typeof reference.highlights[number]): HomeStory {
-  return { ...story, image: localAsset(story.image), date: story.date || (Number(story.id) >= 265727 ? '२ महिना अघि' : '३ महिना अघि'), author: 'सवाल नेपाल' };
+  return { ...story, title: story.title.replace(/\u00a0/g, ' '), image: localAsset(story.image), date: story.date || (Number(story.id) >= 265727 ? '२ महिना अघि' : '३ महिना अघि'), author: 'सवाल नेपाल' };
 }
 
 export const referenceSections = Object.fromEntries(reference.sections.map(section => [section.title, section.articles.map(referenceStory)]));

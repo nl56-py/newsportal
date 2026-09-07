@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db/store";
 
 export async function GET() {
@@ -14,6 +15,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const updated = db.updateSiteSettings(body);
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, settings: updated });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

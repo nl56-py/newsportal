@@ -1,21 +1,23 @@
 import { getHomepageContent } from '@/lib/homepage';
+import { HomepageAd } from '@/components/ads/HomepageAd';
 import {
   HomepageHighlights, MainNews, ProvinceNews, HorizontalNews, SidebarFeature,
   EntertainmentNews, PoliticsNews, HealthNews, ThreeColumnNews,
   StoryCarousel, SectionHeading, NewsList,
 } from '@/components/home/ReferenceSections';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
-  const { sections: s, provinces, highlights } = getHomepageContent();
+  const { sections: s, provinces, highlights, ads } = getHomepageContent();
   return (
     <div className="sn-home">
-      <HomepageHighlights stories={highlights} />
-      <div className="sn-container"><MainNews stories={s['समाचार']} /></div>
+      <HomepageHighlights stories={highlights} ad={ads.Homepage_Mid_Banner} />
+      <div className="sn-container"><MainNews stories={s['समाचार']} ad={ads.Sidebar_Sticky} /></div>
       <StoryCarousel title="धेरै पढिएको" stories={s['धेरै पढिएको']} variant="popular" />
       <div className="sn-container">
         <ProvinceNews provinces={provinces} />
+        <div className="sn-section"><HomepageAd slot={ads.Pradesh_Banner} /></div>
         <div className="sn-split sn-section">
           <HorizontalNews title="सूचना-प्रविधि" stories={s['सूचना-प्रविधि']} />
           <aside className="sn-latest"><SectionHeading title="ताजा समाचार" all={false} /><NewsList stories={s['ताजा समाचार']} /></aside>

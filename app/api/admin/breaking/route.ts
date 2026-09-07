@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 
 export async function GET() {
@@ -14,6 +15,7 @@ export async function POST(request: Request) {
     }
 
     const item = db.insertBreakingNews(headline.trim(), linkUrl);
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, item });
   } catch {
     return NextResponse.json({ error: "Failed to add breaking news" }, { status: 500 });
@@ -26,6 +28,7 @@ export async function PATCH(request: Request) {
     if (!id) return NextResponse.json({ error: "ID is required" }, { status: 400 });
 
     const toggled = db.toggleBreakingNews(id);
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: toggled });
   } catch {
     return NextResponse.json({ error: "Failed to toggle status" }, { status: 500 });
@@ -39,6 +42,7 @@ export async function DELETE(request: Request) {
     if (!id) return NextResponse.json({ error: "ID is required" }, { status: 400 });
 
     const deleted = db.deleteBreakingNews(id);
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: deleted });
   } catch {
     return NextResponse.json({ error: "Failed to delete item" }, { status: 500 });

@@ -111,9 +111,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           </div>
         </form>
 
-        {query && (
+        {(query || from || to) && (
           <p className="text-xs text-slate-500 mt-3 font-medium">
-            &ldquo;{query}&rdquo; का लागि कुल {toNepaliDigits(total)} वटा सामग्री फेला परे (देखाउँदै: {toNepaliDigits(results.length)})
+            &ldquo;{query || `${from || '…'} – ${to || '…'}`}&rdquo; का लागि कुल {toNepaliDigits(total)} वटा सामग्री फेला परे (देखाउँदै: {toNepaliDigits(results.length)})
           </p>
         )}
       </div>
@@ -220,7 +220,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 </div>
               )}
             </div>
-          ) : query ? (
+          ) : (query || from || to) ? (
             <div className="py-16 text-center bg-white border border-slate-200 rounded-2xl p-8">
               <h3 className="text-base font-bold text-slate-700">
                 कुनै नतिजा भेटिएन

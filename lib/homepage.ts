@@ -1,23 +1,14 @@
 import { db } from '@/lib/db';
-import { HomeStory, localAsset, referenceSections, referenceProvinces, referenceHighlights } from './homepage-content';
+import { selectHomepageContent } from './homepage-selection';
 
-// Keep the captured editorial placement while resolving existing stories against
-// the CMS. Missing migration records retain their real source article links.
-// This read-only adapter never overwrites the user's database or admin edits.
+// The CMS is authoritative: no captured stories can resurrect deleted content.
 export function getHomepageContent() {
-  const articles = db.getArticles();
-  const byId = new Map(articles.map(article => [String(article.numericId || article.id), article]));
-  const resolve = (story: HomeStory): HomeStory => {
-    const article = byId.get(story.id);
-    if (!article) return story;
-    return { ...story, title: article.title, href: `/news/${article.slug}`, image: localAsset(article.coverImage) || story.image, author: article.author.name };
-  };
-  const sections = Object.fromEntries(Object.entries(referenceSections).map(([title, stories]) => [title, stories.map(resolve)]));
-  const provinces = Object.fromEntries(Object.entries(referenceProvinces).map(([id, stories]) => [id, stories.map(resolve)]));
-  const highlights = referenceHighlights.map(resolve);
-  const lead = articles.find(article => article.isLeadStory);
-  if (lead && String(lead.numericId || lead.id) !== highlights[0]?.id) {
-    highlights[0] = { id: lead.id, title: lead.title, href: `/news/${lead.slug}`, image: localAsset(lead.coverImage) || lead.coverImage, summary: lead.summary, date: lead.publishedAtBS, author: lead.author.name };
-  }
-  return { sections, provinces, highlights };
+  const state = db.getState();
+  const content = selectHomepageContent(state.articles, state.videos || []);
+  const manualBreaking = (state.breakingNews || []).filter(item => item.active).map(item => ({
+    id: item.id, title: item.headline,
+    href: item.linkUrl && (/^https?:\/\//i.test(item.linkUrl) || item.linkUrl.startsWith('/')) ? item.linkUrl : `/search?s=${encodeURIComponent(item.headline)}`,
+    image: '', summary: '', date: '',
+  }));
+  return { ...content, ads: state.ads || {}, breaking: state.siteSettings?.breakingNewsEnabled === false ? [] : [...manualBreaking, ...content.breaking] };
 }

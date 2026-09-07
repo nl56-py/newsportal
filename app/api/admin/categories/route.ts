@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db/store";
 
 export async function GET() {
@@ -26,6 +27,7 @@ export async function POST(req: NextRequest) {
       order: body.order || 99,
     });
 
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, category: newCategory });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -40,6 +42,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const updated = db.updateCategory(body.id, body);
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, category: updated });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -55,6 +58,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const deleted = db.deleteCategory(id);
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: deleted });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

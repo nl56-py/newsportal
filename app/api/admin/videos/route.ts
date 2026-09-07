@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { VideoStory } from "@/lib/types";
 import { getBikramSambatDate } from "@/lib/nepali-utils";
@@ -70,6 +71,7 @@ export async function POST(request: Request) {
     };
 
     const saved = db.insertVideo(newVideo);
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, video: saved });
   } catch (err) {
     console.error("Error creating video:", err);
@@ -91,6 +93,7 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Video not found" }, { status: 404 });
     }
 
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true, video: updated });
   } catch (err) {
     return NextResponse.json({ error: "Failed to update video" }, { status: 500 });
@@ -111,6 +114,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Video not found" }, { status: 404 });
     }
 
+    revalidatePath('/', 'layout');
     return NextResponse.json({ success: true });
   } catch (err) {
     return NextResponse.json({ error: "Failed to delete video" }, { status: 500 });

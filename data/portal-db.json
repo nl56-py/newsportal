@@ -2041,297 +2041,6 @@
       "isPopular": false
     }
   ],
-  "authors": [
-    {
-      "id": "auth-1",
-      "name": "नारायण वाग्ले",
-      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&q=80",
-      "role": "वरिष्ठ स्तम्भकार तथा लेखक",
-      "bio": "नेपाली समसामयिक राजनीति र सामाजिक रूपान्तरणका विषयमा लामो समयदेखि कलम चलाउँदै आउनुभएका स्तम्भकार।",
-      "email": "wagle@example.com",
-      "socials": {
-        "twitter": "@nwagle"
-      }
-    },
-    {
-      "id": "auth-2",
-      "name": "कनक मणि दीक्षित",
-      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&q=80",
-      "role": "वरिष्ठ पत्रकार तथा विश्लेषक",
-      "bio": "दक्षिण एसियाली राजनीति, नागरिक अधिकार र विकास पत्रकारिताका अध्येता।",
-      "email": "kanak@example.com"
-    },
-    {
-      "id": "auth-3",
-      "name": "डा. स्वर्णिम वाग्ले",
-      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&q=80",
-      "role": "अर्थशास्त्री",
-      "bio": "अर्थतन्त्र, अन्तर्राष्ट्रिय व्यापार, सार्वजनिक नीति तथा दिगो विकासका विज्ञ।",
-      "email": "swarnim@example.com"
-    },
-    {
-      "id": "auth-4",
-      "name": "मञ्जुश्री थापा",
-      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&q=80",
-      "role": "साहित्यकार तथा समाजशास्त्री",
-      "bio": "नेपाली समाज, लैङ्गिक समानता र साहित्य क्षेत्रकी प्रख्यात स्रष्टा।"
-    },
-    {
-      "id": "auth-5",
-      "name": "सुरेश अधिकारी",
-      "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&q=80",
-      "role": "विशेष संवाददाता (सिंहदरबार ब्यूरो)",
-      "bio": "राजनीति, संसद र मन्त्रिपरिषद् मामिलाका विश्लेषक।"
-    },
-    {
-      "id": "auth-6",
-      "name": "विकास श्रेष्ठ",
-      "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&q=80",
-      "role": "अर्थ ब्यूरो प्रमुख",
-      "bio": "बैंकिङ, पुँजीबजार (नेप्से) र राजस्व मामिलाका अन्वेषक।"
-    },
-    {
-      "id": "auth-7",
-      "name": "रिता पाण्डे",
-      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&q=80",
-      "role": "खेलकुद संवाददाता",
-      "bio": "नेपाली क्रिकेट, फुटबल र ओलम्पिक खेलकुदका प्रत्यक्ष विश्लेषक।"
-    }
-  ],
-  "ads": {
-    "Header_Masthead": {
-      "slotId": "header-masthead-ad",
-      "name": "Header Top Masthead",
-      "position": "Header_Masthead",
-      "dimensions": {
-        "desktop": {
-          "width": 970,
-          "height": 90
-        },
-        "mobile": {
-          "width": 320,
-          "height": 100
-        }
-      },
-      "currentAd": {
-        "id": "ad-masthead-001",
-        "title": "हिमालयन बैंक - सुलभ बैंकिङ सेवा",
-        "type": "image",
-        "imageUrl": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=970&h=90&fit=crop&q=80",
-        "redirectUrl": "https://example.com/sponsor-himalayan-bank",
-        "advertiser": "Himalayan Bank Ltd",
-        "active": true
-      }
-    },
-    "Sidebar_Sticky": {
-      "slotId": "sidebar-sticky-ad",
-      "name": "Sidebar High Impact Sticky Banner",
-      "position": "Sidebar_Sticky",
-      "dimensions": {
-        "desktop": {
-          "width": 300,
-          "height": 250
-        },
-        "mobile": {
-          "width": 300,
-          "height": 250
-        }
-      },
-      "currentAd": {
-        "id": "ad-sidebar-001",
-        "title": "नेपाल टेलिकम - नमस्ते ५जी इन्टरनेट",
-        "type": "image",
-        "imageUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=250&fit=crop&q=80",
-        "redirectUrl": "https://example.com/sponsor-ntc",
-        "advertiser": "Nepal Telecom",
-        "active": true
-      }
-    },
-    "In_Article_Inline": {
-      "slotId": "article-inline-ad",
-      "name": "In-Article Content Paragraph Banner",
-      "position": "In_Article_Inline",
-      "dimensions": {
-        "desktop": {
-          "width": 728,
-          "height": 90
-        },
-        "mobile": {
-          "width": 300,
-          "height": 100
-        }
-      },
-      "currentAd": {
-        "id": "ad-article-inline-001",
-        "title": "सिटिजन्स डिजिटल सेभिङ खाता",
-        "type": "image",
-        "imageUrl": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=728&h=90&fit=crop&q=80",
-        "redirectUrl": "https://example.com/sponsor-citizens",
-        "advertiser": "Citizens Bank",
-        "active": true
-      }
-    },
-    "Homepage_Mid_Banner": {
-      "slotId": "homepage-mid-banner",
-      "name": "Homepage Section Divider Banner",
-      "position": "Homepage_Mid_Banner",
-      "dimensions": {
-        "desktop": {
-          "width": 970,
-          "height": 120
-        },
-        "mobile": {
-          "width": 320,
-          "height": 100
-        }
-      },
-      "currentAd": {
-        "id": "ad-mid-001",
-        "title": "सुजुकी हाइब्रिड कार - चाडपर्व विशेष अफर",
-        "type": "image",
-        "imageUrl": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=970&h=120&fit=crop&q=80",
-        "redirectUrl": "https://example.com/sponsor-suzuki",
-        "advertiser": "CG Motors",
-        "active": true
-      }
-    },
-    "Pradesh_Banner": {
-      "slotId": "pradesh-banner",
-      "name": "Provincial News Banner",
-      "position": "Pradesh_Banner",
-      "dimensions": {
-        "desktop": {
-          "width": 970,
-          "height": 90
-        },
-        "mobile": {
-          "width": 300,
-          "height": 100
-        }
-      },
-      "currentAd": {
-        "id": "ad-pradesh-001",
-        "title": "गण्डकी पर्यटन वर्ष - घुम्न जाउँ पोखरा",
-        "type": "image",
-        "imageUrl": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=970&h=90&fit=crop&q=80",
-        "redirectUrl": "https://example.com/sponsor-gandaki-tourism",
-        "advertiser": "Gandaki Tourism Board",
-        "active": true
-      }
-    },
-    "Bottom_Sticky_Anchor": {
-      "slotId": "bottom-sticky-anchor-ad",
-      "name": "Bottom Floating Sticky Banner",
-      "position": "Bottom_Sticky_Anchor",
-      "dimensions": {
-        "desktop": {
-          "width": 728,
-          "height": 90
-        },
-        "mobile": {
-          "width": 320,
-          "height": 50
-        }
-      },
-      "currentAd": {
-        "id": "ad-bottom-anchor-001",
-        "title": "ई-सेवा मनी ट्रान्सफर - विदेशबाट पैसा पठाउँदा बोनस",
-        "type": "image",
-        "imageUrl": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=728&h=90&fit=crop&q=80",
-        "redirectUrl": "https://example.com/sponsor-esewa",
-        "advertiser": "eSewa Money Transfer",
-        "active": true
-      }
-    }
-  },
-  "breakingNews": [
-    {
-      "id": "brk-1",
-      "headline": "संसद्को बजेट अधिवेशन आज दिउँसो १ बजे बस्दै, विभिन्न अध्यादेश टेबुल गरिने",
-      "active": true,
-      "createdAt": "2026-08-29T05:06:24.311Z"
-    },
-    {
-      "id": "brk-2",
-      "headline": "नेपाल प्रिमियर लिग (एनपिएल) क्रिकेटको खेल तालिका सार्वजनिक, उद्घाटन खेल कीर्तिपुरमा हुने",
-      "active": true,
-      "createdAt": "2026-08-29T05:06:24.311Z"
-    },
-    {
-      "id": "brk-3",
-      "headline": "सुनको मूल्य तोलामा १ हजार ५ सय रुपैयाँले घट्यो, आज प्रतितोला १ लाख ६२ हजारमा कारोबार",
-      "active": true,
-      "createdAt": "2026-08-29T05:06:24.311Z"
-    },
-    {
-      "id": "brk-4",
-      "headline": "काठमाडौँ-तराई द्रुतमार्ग (फास्ट ट्र्याक) को सुरुङ खन्ने काम तीव्र, ७० प्रतिशत कार्य सम्पन्न",
-      "active": true,
-      "createdAt": "2026-08-29T05:06:24.311Z"
-    },
-    {
-      "id": "brk-5",
-      "headline": "गण्डकी प्रदेश सरकारद्वारा आगामी आर्थिक वर्षको नीति तथा कार्यक्रम प्रस्तुत",
-      "active": true,
-      "createdAt": "2026-08-29T05:06:24.311Z"
-    }
-  ],
-  "adminUsers": [
-    {
-      "id": "usr-admin-01",
-      "username": "admin",
-      "password": "adminpassword",
-      "name": "प्रमुख प्रशासक (Chief Administrator)",
-      "email": "admin@nepalpati.com",
-      "role": "super_admin"
-    }
-  ],
-  "analytics": {
-    "totalImpressions": 1420,
-    "totalClicks": 84
-  },
-  "videos": [
-    {
-      "id": "vid-1",
-      "title": "काठमाडौँमा भएको विशेष पत्रकार सम्मेलन तथा राजनीतिक बहसको प्रत्यक्ष दृश्य",
-      "thumbnail": "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&h=450&fit=crop&q=80",
-      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "duration": "०८:२५",
-      "publishedAtBS": "१४ भाद्र २०८३",
-      "views": 14200,
-      "categoryName": "मल्टिमिडिया"
-    },
-    {
-      "id": "vid-2",
-      "title": "दमक र झापाका प्रमुख विकास आयोजनाहरूको स्थलगत भिडियो रिपोर्ट",
-      "thumbnail": "https://images.unsplash.com/photo-1526470608268-f674ce90ebd4?w=800&h=450&fit=crop&q=80",
-      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "duration": "०५:१४",
-      "publishedAtBS": "१३ भाद्र २०८३",
-      "views": 9800,
-      "categoryName": "विकास/आयोजना"
-    },
-    {
-      "id": "vid-3",
-      "title": "नेपाली खेलकुदको भविष्य र अन्तर्राष्ट्रिय प्रतियोगिताको तयारीबारे विशेष विश्लेषण",
-      "thumbnail": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=450&fit=crop&q=80",
-      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "duration": "११:४०",
-      "publishedAtBS": "१२ भाद्र २०८३",
-      "views": 18500,
-      "categoryName": "खेलकुद"
-    },
-    {
-      "id": "vid-4",
-      "title": "नेपालमा सूचना-प्रविधि तथा एआई क्रान्तिको अवसर र चुनौती",
-      "thumbnail": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=450&fit=crop&q=80",
-      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "duration": "०७:३०",
-      "publishedAtBS": "११ भाद्र २०८३",
-      "views": 22100,
-      "categoryName": "सूचना-प्रविधि"
-    }
-  ],
   "categories": [
     {
       "id": "cat-samachar",
@@ -2732,206 +2441,270 @@
       "uploadedAt": "2026-03-11T01:56:41.000Z",
       "fileSize": "245 KB",
       "dimensions": "1200x650"
+    }
+  ],
+  "authors": [
+    {
+      "id": "auth-sawal",
+      "name": "सवाल नेपाल",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&q=80",
+      "role": "सम्पादकीय टिम (Sawal Nepal)",
+      "bio": "सत्य, तथ्य र निष्पक्ष समाचार तथा मनोरञ्जनको अग्रणी डिजिटल पत्रिका।",
+      "email": "news@sawalnepal.com",
+      "socials": {
+        "twitter": "@sawalnepal",
+        "facebook": "https://facebook.com/sawaalnepal"
+      }
     },
     {
-      "id": "med-31",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/03/damodar-hari-baitadi.jpg",
-      "title": "बैतडी–१ मा रास्वपाका हरि र एमालेका दामोदरबीच कडा प्रतिस्पर्धा",
-      "caption": "बैतडी–१ मा रास्वपाका हरि र एमालेका दामोदरबीच कडा प्रतिस्पर्धा",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-03-07T06:34:13.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "auth-kedar",
+      "name": "केदार अधिकारी",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&q=80",
+      "role": "विशेष संवाददाता (दमक / झापा)",
+      "bio": "शिक्षा, स्थानीय सरोकार र समसामयिक राजनीति सम्बन्धी खोजमूलक पत्रकारिता।",
+      "email": "kedar@sawalnepal.com"
     },
     {
-      "id": "med-32",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/03/Rabindra-mishra1669101306.jpg",
-      "title": "हारमा ह्याट्रिक गरेपछि रवीन्द्र मिश्रले लिए राजनीतिबाट बिदा",
-      "caption": "हारमा ह्याट्रिक गरेपछि रवीन्द्र मिश्रले लिए राजनीतिबाट बिदा",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-03-07T06:29:37.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "auth-3",
+      "name": "डा. स्वर्णिम वाग्ले",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&q=80",
+      "role": "अर्थशास्त्री तथा स्तम्भकार",
+      "bio": "अर्थतन्त्र, बजेट, राजस्व तथा सार्वजनिक नीति सम्बन्धी विश्लेषक।",
+      "email": "swarnim@sawalnepal.com"
     },
     {
-      "id": "med-33",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/03/Mahabir-Pun-minister.jpg",
-      "title": "म्याग्दीमा महावीर पुन भारी मतान्तरले विजयी",
-      "caption": "म्याग्दीमा महावीर पुन भारी मतान्तरले विजयी",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-03-07T02:42:10.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "auth-6",
+      "name": "विकास श्रेष्ठ",
+      "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&q=80",
+      "role": "अर्थ ब्यूरो प्रमुख",
+      "bio": "बैंकिङ, पुँजीबजार, नेप्से र सुनचाँदी कारोबार विश्लेषक।"
     },
     {
-      "id": "med-34",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/03/rabi-lamichhane-3.jpg",
-      "title": "चितवन–२ बाट रास्वपा सभापति लामिछाने विजयी",
-      "caption": "चितवन–२ बाट रास्वपा सभापति लामिछाने विजयी",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-03-07T02:39:27.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "auth-7",
+      "name": "रिता पाण्डे",
+      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop&q=80",
+      "role": "खेलकुद तथा मनोरञ्जन संवाददाता",
+      "bio": "फुटबल, क्रिकेट र नेपाली चलचित्र क्षेत्रका विश्लेषक।"
+    }
+  ],
+  "ads": {
+    "Header_Masthead": {
+      "slotId": "header-masthead-ad",
+      "name": "Header Top Masthead",
+      "position": "Header_Masthead",
+      "dimensions": {
+        "desktop": {
+          "width": 970,
+          "height": 90
+        },
+        "mobile": {
+          "width": 320,
+          "height": 100
+        }
+      },
+      "currentAd": {
+        "id": "ad-masthead-001",
+        "title": "हिमालयन बैंक - सुलभ बैंकिङ सेवा",
+        "type": "image",
+        "imageUrl": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=970&h=90&fit=crop&q=80",
+        "redirectUrl": "https://example.com/sponsor-himalayan-bank",
+        "advertiser": "Himalayan Bank Ltd",
+        "active": true
+      }
+    },
+    "Sidebar_Sticky": {
+      "slotId": "sidebar-sticky-ad",
+      "name": "Sidebar High Impact Sticky Banner",
+      "position": "Sidebar_Sticky",
+      "dimensions": {
+        "desktop": {
+          "width": 300,
+          "height": 250
+        },
+        "mobile": {
+          "width": 300,
+          "height": 250
+        }
+      },
+      "currentAd": {
+        "id": "ad-sidebar-001",
+        "title": "नेपाल टेलिकम - नमस्ते ५जी इन्टरनेट",
+        "type": "image",
+        "imageUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=250&fit=crop&q=80",
+        "redirectUrl": "https://example.com/sponsor-ntc",
+        "advertiser": "Nepal Telecom",
+        "active": true
+      }
+    },
+    "In_Article_Inline": {
+      "slotId": "article-inline-ad",
+      "name": "In-Article Content Paragraph Banner",
+      "position": "In_Article_Inline",
+      "dimensions": {
+        "desktop": {
+          "width": 728,
+          "height": 90
+        },
+        "mobile": {
+          "width": 300,
+          "height": 100
+        }
+      },
+      "currentAd": {
+        "id": "ad-article-inline-001",
+        "title": "सिटिजन्स डिजिटल सेभिङ खाता",
+        "type": "image",
+        "imageUrl": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=728&h=90&fit=crop&q=80",
+        "redirectUrl": "https://example.com/sponsor-citizens",
+        "advertiser": "Citizens Bank",
+        "active": true
+      }
+    },
+    "Homepage_Mid_Banner": {
+      "slotId": "homepage-mid-banner",
+      "name": "Homepage Section Divider Banner",
+      "position": "Homepage_Mid_Banner",
+      "dimensions": {
+        "desktop": {
+          "width": 970,
+          "height": 120
+        },
+        "mobile": {
+          "width": 320,
+          "height": 100
+        }
+      },
+      "currentAd": {
+        "id": "ad-mid-001",
+        "title": "सुजुकी हाइब्रिड कार - चाडपर्व विशेष अफर",
+        "type": "image",
+        "imageUrl": "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=970&h=120&fit=crop&q=80",
+        "redirectUrl": "https://example.com/sponsor-suzuki",
+        "advertiser": "CG Motors",
+        "active": true
+      }
+    },
+    "Pradesh_Banner": {
+      "slotId": "pradesh-banner",
+      "name": "Provincial News Banner",
+      "position": "Pradesh_Banner",
+      "dimensions": {
+        "desktop": {
+          "width": 970,
+          "height": 90
+        },
+        "mobile": {
+          "width": 300,
+          "height": 100
+        }
+      },
+      "currentAd": {
+        "id": "ad-pradesh-001",
+        "title": "गण्डकी पर्यटन वर्ष - घुम्न जाउँ पोखरा",
+        "type": "image",
+        "imageUrl": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=970&h=90&fit=crop&q=80",
+        "redirectUrl": "https://example.com/sponsor-gandaki-tourism",
+        "advertiser": "Gandaki Tourism Board",
+        "active": true
+      }
+    },
+    "Bottom_Sticky_Anchor": {
+      "slotId": "bottom-sticky-anchor-ad",
+      "name": "Bottom Floating Sticky Banner",
+      "position": "Bottom_Sticky_Anchor",
+      "dimensions": {
+        "desktop": {
+          "width": 728,
+          "height": 90
+        },
+        "mobile": {
+          "width": 320,
+          "height": 50
+        }
+      },
+      "currentAd": {
+        "id": "ad-bottom-anchor-001",
+        "title": "ई-सेवा मनी ट्रान्सफर - विदेशबाट पैसा पठाउँदा बोनस",
+        "type": "image",
+        "imageUrl": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=728&h=90&fit=crop&q=80",
+        "redirectUrl": "https://example.com/sponsor-esewa",
+        "advertiser": "eSewa Money Transfer",
+        "active": true
+      }
+    }
+  },
+  "breakingNews": [
+    {
+      "id": "brk-1",
+      "headline": "दमकका शैक्षिक परामर्श ब्यवसायीहरु सडकमा : नियमावली २०८३ विरुद्ध शान्तिपूर्ण विरोध र्‍याली",
+      "active": true,
+      "createdAt": "2026-09-07T04:14:02.276Z"
     },
     {
-      "id": "med-35",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/03/harka-sampang-1.jpg",
-      "title": "सुनसरी– १ : हर्क साम्पाङले लिए अग्रता, रास्वपाकी गोमा पछ्याउँदै",
-      "caption": "सुनसरी– १ : हर्क साम्पाङले लिए अग्रता, रास्वपाकी गोमा पछ्याउँदै",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-03-07T02:34:20.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "brk-2",
+      "headline": "नयाँ आर्थिक वर्ष शुरु : शिक्षा, स्वास्थ्य र बिजुलीमा पनि थप करको व्यवस्था लागू",
+      "active": true,
+      "createdAt": "2026-09-07T04:14:02.276Z"
     },
     {
-      "id": "med-36",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2023/04/pathivara-devi-tour-1.jpg",
-      "title": "आज २०८२ साल फागुन १८ गते सोमबारको राशिफल",
-      "caption": "आज २०८२ साल फागुन १८ गते सोमबारको राशिफल",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-03-02T01:31:22.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "brk-3",
+      "headline": "आज सुनको भाउ बढ्यो, चाँदीको घट्यो : प्रतितोला १ लाख ६२ हजार ५०० मा कारोबार",
+      "active": true,
+      "createdAt": "2026-09-07T04:14:02.276Z"
     },
     {
-      "id": "med-37",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/03/aakramn_IpTDcKlogP_2hW0ofKqSq.jpg",
-      "title": "अमेरिका- इजरायलले इरानमा गरेकाे संयुक्त आक्रमणमा कम्तिमा १३३ नागरिकको मृत्यु",
-      "caption": "अमेरिका- इजरायलले इरानमा गरेकाे संयुक्त आक्रमणमा कम्तिमा १३३ नागरिकको मृत्यु",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-03-01T01:52:56.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "brk-4",
+      "headline": "इङ्ग्ल्यान्ड भर्सेस अर्जेन्टिना: कसले मार्ला बाजी? विश्वकप फुटबलको यस्तो छ इतिहास",
+      "active": true,
+      "createdAt": "2026-09-07T04:14:02.276Z"
     },
     {
-      "id": "med-38",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2023/05/pathivara-mata-5.jpg",
-      "title": "आज २०८२ साल फागुन १७ गते आइतबारको राशिफल",
-      "caption": "आज २०८२ साल फागुन १७ गते आइतबारको राशिफल",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-03-01T01:28:07.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "brk-5",
+      "headline": "विभिन्न कार्यक्रमका साथ देशभर भव्य रूपमा गणतन्त्र दिवस मनाइँदै",
+      "active": true,
+      "createdAt": "2026-09-07T04:14:02.276Z"
+    }
+  ],
+  "videos": [
+    {
+      "id": "vid-1",
+      "title": "दमकको समसामयिक विकास र शैक्षिक आन्दोलनबारे विशेष संवाद",
+      "thumbnail": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=600&h=380&fit=crop&q=80",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "duration": "१२:४५",
+      "publishedAtBS": "३ दिन अघि",
+      "views": 45200,
+      "categoryName": "अन्तर्वार्ता"
     },
     {
-      "id": "med-39",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/03/trump-khameni.jpg",
-      "title": "आक्रमणमा इरानी सर्वोच्च नेता खामेनेई मारिएको ट्रम्पको दाबी",
-      "caption": "आक्रमणमा इरानी सर्वोच्च नेता खामेनेई मारिएको ट्रम्पको दाबी",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-03-01T01:20:04.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "vid-2",
+      "title": "नेपालको सेयर बजार र अर्थतन्त्रको दिशा : विज्ञ विश्लेषण",
+      "thumbnail": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=380&fit=crop&q=80",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "duration": "०८:२०",
+      "publishedAtBS": "५ दिन अघि",
+      "views": 32100,
+      "categoryName": "अर्थ संवाद"
     },
     {
-      "id": "med-40",
-      "url": "https://sawaalnepal.com/wp-content/uploads/2019/06/Pathibhara_Devi_Temple.jpg",
-      "title": "आज २०८२ साल फागुन १३ गते बुधबारको राशिफल",
-      "caption": "आज २०८२ साल फागुन १३ गते बुधबारको राशिफल",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-25T01:21:39.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "vid-3",
+      "title": "विश्वकप फुटबलको इतिहास र यादगार क्षणहरू",
+      "thumbnail": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=600&h=380&fit=crop&q=80",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "duration": "१५:१०",
+      "publishedAtBS": "१ हप्ता अघि",
+      "views": 68400,
+      "categoryName": "खेल विशेष"
     },
     {
-      "id": "med-41",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/02/rabi-devraj.jpg",
-      "title": "रविको भनाइमा निवर्तमान सभामुख घिमिरेको कडा आपत्ति, भने : घृणा फैल्याउने काम बन्द गर",
-      "caption": "रविको भनाइमा निवर्तमान सभामुख घिमिरेको कडा आपत्ति, भने : घृणा फैल्याउने काम बन्द गर",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-24T07:01:11.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
-    },
-    {
-      "id": "med-42",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/02/election.jpg",
-      "title": "निर्वाचन आउन नौ दिन बाँकीः आचारसंहितामा कडाइ गर्दै आयोग",
-      "caption": "निर्वाचन आउन नौ दिन बाँकीः आचारसंहितामा कडाइ गर्दै आयोग",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-24T01:45:35.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
-    },
-    {
-      "id": "med-43",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2023/04/pathivara-mata-4.jpg",
-      "title": "आज २०८२ साल फागुन १२ गते मंगलबारको राशिफल",
-      "caption": "आज २०८२ साल फागुन १२ गते मंगलबारको राशिफल",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-24T01:18:42.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
-    },
-    {
-      "id": "med-44",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/02/KP_SHARMA_OLI__OFFICE.jpg",
-      "title": "एमाले बिनाको देश समृद्धिको कल्पना कसैले नगरे हुन्छ: अध्यक्ष ओली",
-      "caption": "एमाले बिनाको देश समृद्धिको कल्पना कसैले नगरे हुन्छ: अध्यक्ष ओली",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-24T01:14:45.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
-    },
-    {
-      "id": "med-45",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/02/accident-update.png",
-      "title": "धादिङ दुर्घटनाको उद्धार सकियो : मृतक १८ जनामध्ये दुई विदेशी नागरिक",
-      "caption": "धादिङ दुर्घटनाको उद्धार सकियो : मृतक १८ जनामध्ये दुई विदेशी नागरिक",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-23T01:47:42.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
-    },
-    {
-      "id": "med-46",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2024/06/Pathivara-mata-mandir.jpg",
-      "title": "आज २०८२ साल फागुन ३ गते आइतबारको राशिफल",
-      "caption": "आज २०८२ साल फागुन ३ गते आइतबारको राशिफल",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-15T03:02:48.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
-    },
-    {
-      "id": "med-47",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/02/nirwachan1234-768x512-1.png",
-      "title": "निर्वाचन २१ दिन बाँकीः यी हुन् नागरिक शिक्षा प्रवर्द्धनका स्रोत सामग्री",
-      "caption": "निर्वाचन २१ दिन बाँकीः यी हुन् नागरिक शिक्षा प्रवर्द्धनका स्रोत सामग्री",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-12T01:30:31.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
-    },
-    {
-      "id": "med-48",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2022/07/pathibhra-mata-rashifal.jpg",
-      "title": "आज २०८२ साल माघ २९ गते बिहीबारको राशिफल",
-      "caption": "आज २०८२ साल माघ २९ गते बिहीबारको राशिफल",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-12T01:22:53.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
-    },
-    {
-      "id": "med-49",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2026/02/krishna-god.jpg",
-      "title": "बुधबार श्रीकृष्णको पूजा गर्नुहोस्",
-      "caption": "बुधबार श्रीकृष्णको पूजा गर्नुहोस्",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-11T01:55:55.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
-    },
-    {
-      "id": "med-50",
-      "url": "https://www.sawalnepal.com/wp-content/uploads/2023/10/pathivara.jpg",
-      "title": "आज २०८२ साल माघ २८ गते बुधबारको राशिफल",
-      "caption": "आज २०८२ साल माघ २८ गते बुधबारको राशिफल",
-      "photographer": "सवाल नेपाल",
-      "uploadedAt": "2026-02-11T01:51:37.000Z",
-      "fileSize": "245 KB",
-      "dimensions": "1200x650"
+      "id": "vid-4",
+      "title": "नेपालका अनौठा प्राकृतिक आश्चर्यहरूको भिडियो वृत्तचित्र",
+      "thumbnail": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&h=380&fit=crop&q=80",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "duration": "१८:३०",
+      "publishedAtBS": "२ हप्ता अघि",
+      "views": 89300,
+      "categoryName": "विचित्र संसार"
     }
   ],
   "siteSettings": {
@@ -2948,5 +2721,35 @@
     "youtubeUrl": "https://youtube.com/@sawalnepal",
     "googleAnalyticsId": "G-XXXXXXXXXX",
     "breakingNewsEnabled": true
+  },
+  "adminUsers": [
+    {
+      "id": "usr-admin-01",
+      "username": "admin",
+      "password": "adminpassword",
+      "name": "सम्पादक (Editor-in-Chief)",
+      "email": "admin@sawalnepal.com",
+      "role": "super_admin"
+    },
+    {
+      "id": "usr-admin-02",
+      "username": "kedar",
+      "password": "Damak123@#",
+      "name": "केदार अधिकारी",
+      "email": "kpoudel89@gmail.com",
+      "role": "super_admin"
+    },
+    {
+      "id": "usr-admin-03",
+      "username": "sudip",
+      "password": "Damak123@#",
+      "name": "Sudip Adhikari",
+      "email": "sudip.himshikhartv@gmail.com",
+      "role": "editor"
+    }
+  ],
+  "analytics": {
+    "totalImpressions": 1420,
+    "totalClicks": 84
   }
 }

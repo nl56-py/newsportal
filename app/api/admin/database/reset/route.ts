@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 
 export async function POST() {
   try {
     const newState = db.resetToDefault();
+    revalidatePath('/', 'layout');
     return NextResponse.json({
       success: true,
       message: "डेटाबेस प्रारम्भिक अवस्थामा रिसेट भयो (Database reset to defaults)",

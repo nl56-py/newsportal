@@ -7,6 +7,8 @@ import { Header } from "@/components/header/Header";
 import { Footer } from "@/components/footer/Footer";
 import { BottomAnchorAd } from "@/components/ads/BottomAnchorAd";
 
+export const dynamic = 'force-dynamic';
+
 /* ── Sawal Nepal Font Stack ──────────────────────────────────
  * Primary:   Mukta      — Devanagari headings, nav, body (300–700)
  * Secondary: Martel     — Devanagari serif option (200–900)
@@ -97,7 +99,7 @@ export default function RootLayout({
     >
       <body className="flex flex-col min-h-screen font-mukta bg-[#f4f6f8] text-slate-900 selection:bg-sawal-red selection:text-white">
         {/* Master Header */}
-        <Header recent={[...homepage.sections['ताजा समाचार'], ...homepage.sections['समाचार'].slice(3, 5)]} popular={homepage.sections['धेरै पढिएको']} />
+        <Header recent={homepage.recent} popular={homepage.sections['धेरै पढिएको']} breaking={homepage.breaking} ad={homepage.ads.Header_Masthead} />
 
         {/* Main Content Area */}
         <main className="flex-1 w-full">{children}</main>
@@ -106,7 +108,7 @@ export default function RootLayout({
         <Footer />
 
         {/* Fixed Bottom Anchor Sticky Ad */}
-        <BottomAnchorAd />
+        <BottomAnchorAd slot={homepage.ads.Bottom_Sticky_Anchor} />
       </body>
     </html>
   );

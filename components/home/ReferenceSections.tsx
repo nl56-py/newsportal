@@ -2,15 +2,18 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Link from 'next/link';
+import { HomepageAd } from '@/components/ads/HomepageAd';
+import type { AdSlotDefinition } from '@/lib/types';
 import { HomeStory, homepageBrand, sectionSlugs } from '@/lib/homepage-content';
 
-const glyphs = { menu: '\uf0c9', search: '\uf002', recent: '\uf110', bolt: '\uf0e7', close: '\uf00d', clock: '\uf017', right: '\uf105', left: '\uf060', up: '\uf106', play: '\uf144', facebook: '\uf09a', twitter: '\uf099', youtube: '\uf16a', instagram: '\uf16d', heart: '\uf004' };
+const glyphs = { menu: '\uf0c9', search: '\uf002', recent: '\uf110', bolt: '\uf0e7', close: '\uf00d', clock: '\uf017', right: '\uf105', left: '\uf060', up: '\uf176', play: '\uf01d', facebook: '\uf09a', twitter: '\uf099', youtube: '\uf16a', instagram: '\uf16d', heart: '\uf004' };
 export function SourceIcon({ name, className = '' }: { name: keyof typeof glyphs; className?: string }) {
   return <i className={`sn-icon ${className}`} aria-hidden="true">{glyphs[name]}</i>;
 }
 
 export function StoryImage({ story, className = '' }: { story: HomeStory; className?: string }) {
   const [failed, setFailed] = useState(false);
+  useEffect(() => setFailed(false), [story.image]);
   if (!story.image || failed) return null;
   return <img src={story.image} alt={story.title} loading="lazy" className={className} onError={() => setFailed(true)} />;
 }
@@ -32,11 +35,15 @@ export function LeadCard({ story, overlay = false, byline = true, className = ''
   return <article className={`sn-lead-card ${overlay ? 'sn-overlay-card' : ''} ${className}`}><Link href={story.href} className="sn-lead-image" prefetch={false}><StoryImage story={story} /></Link><div className="sn-lead-copy"><h3><Link href={story.href} prefetch={false}>{story.title}</Link></h3>{byline && <Byline story={story} />}</div></article>;
 }
 
-function StackCard({ story }: { story: HomeStory }) {
+function StackCard({ story }: { story?: HomeStory }) {
+  if (!story) return null;
   return <article className="sn-stack-card"><Link href={story.href} prefetch={false}><StoryImage story={story} /><h3>{story.title}</h3></Link></article>;
 }
 
+export function EmptyNews() { return <p className="sn-empty-news">यस विधामा समाचार प्रकाशित भएको छैन।</p>; }
+
 export function ThreeColumnNews({ stories, middleCount = 3, featuredRight = false, byline = true, compact = false }: { stories: HomeStory[]; middleCount?: number; featuredRight?: boolean; byline?: boolean; compact?: boolean }) {
+  if (!stories.length) return <EmptyNews />;
   const right = stories.slice(middleCount + 1);
   return <div className={`sn-three-columns ${compact ? 'sn-three-compact' : ''}`}><LeadCard story={stories[0]} byline={byline} /><div className="sn-middle-stack">{stories.slice(1, middleCount + 1).map(story => <StackCard key={story.id} story={story} />)}</div><div>{featuredRight && right[0] ? <><div className="sn-right-feature"><StackCard story={right[0]} /></div><NewsList stories={right.slice(1)} /></> : <NewsList stories={right} />}</div></div>;
 }
@@ -50,19 +57,20 @@ export function ProvinceNews({ provinces }: { provinces: Record<string, HomeStor
 
 export function HorizontalNews({ title, stories, economy = false }: { title: string; stories: HomeStory[]; economy?: boolean }) {
   const lead = stories[0];
+  if (!lead) return <section className="sn-section sn-horizontal-section"><SectionHeading title={title} /><EmptyNews /></section>;
   return <section className={`sn-section sn-horizontal-section ${economy ? 'sn-economy' : ''}`}><SectionHeading title={title}>{economy && <div className="sn-secondary-tabs"><Link className="sn-pill" href="/category/economy">बैँक / वित्त</Link><Link className="sn-pill" href="/search?s=रोजगार">रोजगार</Link></div>}</SectionHeading><div className="sn-horizontal-lead"><Link href={lead.href} prefetch={false}><StoryImage story={lead} /></Link><div><h3><Link href={lead.href} prefetch={false}>{lead.title}</Link></h3><Byline story={lead} time={false} /></div></div><div className="sn-two-lists"><NewsList stories={stories.slice(1, 3)} /><NewsList stories={stories.slice(3, 5)} /></div></section>;
 }
 
 export function SidebarFeature({ title, stories }: { title: string; stories: HomeStory[] }) {
-  return <section className="sn-section sn-sidebar-feature"><SectionHeading title={title} /><StackCard story={stories[0]} /><NewsList stories={stories.slice(1)} /></section>;
+  return <section className="sn-section sn-sidebar-feature"><SectionHeading title={title} />{!stories.length && <EmptyNews />}<StackCard story={stories[0]} /><NewsList stories={stories.slice(1)} /></section>;
 }
 
-export function MainNews({ stories }: { stories: HomeStory[] }) {
-  return <section className="sn-section sn-main-news" id="news"><SectionHeading title="समाचार" /><div className="sn-news-ad-grid"><div><div className="sn-main-news-grid"><LeadCard story={stories[0]} overlay /><NewsList stories={stories.slice(1, 6)} dates /></div><div className="sn-two-lists"><NewsList stories={stories.slice(6, 8)} dates /><NewsList stories={stories.slice(8, 10)} dates /></div></div><aside className="sn-reference-ads" aria-label="विज्ञापन"><img src={homepageBrand.sidebar} alt="JEC IELTS or PTE Classes" loading="lazy" /><img src={homepageBrand.referral} alt="WorldLink Refer Offer" loading="lazy" /><h3>वाई. टेक प्रा.लि</h3></aside></div></section>;
+export function MainNews({ stories, ad }: { stories: HomeStory[]; ad?: AdSlotDefinition }) {
+  return <section className="sn-section sn-main-news" id="news"><SectionHeading title="समाचार" /><div className="sn-news-ad-grid"><div><div className="sn-main-news-grid"><LeadCard story={stories[0]} overlay /><NewsList stories={stories.slice(1, 6)} dates /></div><div className="sn-two-lists"><NewsList stories={stories.slice(6, 8)} dates /><NewsList stories={stories.slice(8, 10)} dates /></div></div><aside className="sn-reference-ads" aria-label="विज्ञापन"><HomepageAd slot={ad} /></aside></div></section>;
 }
 
 export function EntertainmentNews({ stories }: { stories: HomeStory[] }) {
-  return <section className="sn-section sn-entertainment"><SectionHeading title="मनोरञ्जन" /><div className="sn-entertainment-grid"><LeadCard story={stories[0]} overlay byline={false} /><NewsList stories={stories.slice(1, 6)} /><div><div className="sn-entertainment-feature"><StackCard story={stories[6]} /></div><NewsList stories={stories.slice(7)} /></div></div></section>;
+  return <section className="sn-section sn-entertainment"><SectionHeading title="मनोरञ्जन" /><div className="sn-entertainment-grid"><LeadCard story={stories[0]} overlay byline={false} /><NewsList stories={stories.slice(1, 6)} /><div>{stories[6] && <div className="sn-entertainment-feature"><StackCard story={stories[6]} /></div>}<NewsList stories={stories.slice(7)} /></div></div></section>;
 }
 
 export function PoliticsNews({ stories }: { stories: HomeStory[] }) {
@@ -84,9 +92,9 @@ export function StoryCarousel({ title, stories, variant = 'feature' }: { title: 
   const pages = Math.ceil(stories.length / perPage);
   const goTo = (next: number) => { const safe = Math.max(0, Math.min(pages - 1, next)); setPage(safe); track.current?.scrollTo({ left: safe * (track.current.clientWidth + 30), behavior: 'smooth' }); };
   const dots = <div className="sn-carousel-dots" aria-label={`${title} स्लाइड`}>{Array.from({ length: pages }, (_, i) => <button key={i} aria-label={`${title}: स्लाइड ${i + 1}`} aria-current={page === i ? 'true' : undefined} className={page === i ? 'is-active' : ''} onClick={() => goTo(i)} />)}</div>;
-  return <section className={`sn-carousel sn-carousel-${variant}`} aria-label={title}><div className="sn-container"><SectionHeading title={title} all={variant !== 'popular'}>{variant === 'popular' && dots}</SectionHeading><div ref={track} className="sn-carousel-track" tabIndex={0} onKeyDown={e => {if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){e.preventDefault();goTo(page + (e.key === 'ArrowRight' ? 1 : -1));}}} onScroll={() => { if(track.current) setPage(Math.min(pages - 1, Math.round(track.current.scrollLeft / (track.current.clientWidth + 30)))); }}>{stories.map((story, i) => <article className="sn-carousel-card" key={story.id}><Link href={story.href} prefetch={false}><div className="sn-carousel-image"><StoryImage story={story} /></div>{variant === 'popular' && <span className="sn-rank">{String(i + 1).replace(/\d/g, n => '०१२३४५६७८९'[Number(n)])}</span>}{variant === 'video' && <span className="sn-video-play"><SourceIcon name="play" /></span>}<h3>{story.title}</h3></Link></article>)}</div>{variant !== 'popular' && variant !== 'video' && dots}{variant === 'video' && <div className="sn-video-pagination">{dots}</div>}</div></section>;
+  return <section className={`sn-carousel sn-carousel-${variant}`} aria-label={title}><div className="sn-container"><SectionHeading title={title} all={variant !== 'popular'}>{variant === 'popular' && dots}</SectionHeading><div ref={track} className="sn-carousel-track" tabIndex={0} onKeyDown={e => {if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){e.preventDefault();goTo(page + (e.key === 'ArrowRight' ? 1 : -1));}}} onScroll={() => { if(track.current) setPage(Math.min(pages - 1, track.current.scrollLeft >= track.current.scrollWidth - track.current.clientWidth - 2 ? pages - 1 : Math.round(track.current.scrollLeft / (track.current.clientWidth + 30)))); }}>{stories.map((story, i) => <article className="sn-carousel-card" key={story.id}><Link href={story.href} prefetch={false}><div className="sn-carousel-image"><StoryImage story={story} /></div>{variant === 'popular' && <span className="sn-rank">{String(i + 1).replace(/\d/g, n => '०१२३४५६७८९'[Number(n)])}</span>}{variant === 'video' && <span className="sn-video-play"><SourceIcon name="play" /></span>}<h3>{story.title}</h3></Link></article>)}</div>{variant !== 'popular' && variant !== 'video' && dots}{variant === 'video' && <div className="sn-video-pagination">{dots}</div>}</div></section>;
 }
 
-export function HomepageHighlights({ stories }: { stories: HomeStory[] }) {
-  return <section className="sn-container sn-highlights" aria-label="मुख्य समाचार">{stories.map((story, i) => <div key={story.id}><article className={`sn-highlight ${i < 2 ? 'sn-highlight-divider' : ''}`}><h1 hidden={i !== 0}>{i === 0 && <Link href={story.href} prefetch={false}>{story.title}</Link>}</h1>{i > 0 && <h2><Link href={story.href} prefetch={false}>{story.title}</Link></h2>}<Byline story={story} />{i === 2 && <><Link href={story.href} prefetch={false} className="sn-highlight-image"><img src={story.image} alt={story.title} width={1536} height={838} fetchPriority="high" /></Link><p className="sn-highlight-summary">{story.summary}</p></>}</article>{i === 1 && <div className="sn-headline-ad"><img src={homepageBrand.banner} alt="Unicampus Global — Study in Australia" width={640} height={156} /></div>}</div>)}</section>;
+export function HomepageHighlights({ stories, ad }: { stories: HomeStory[]; ad?: AdSlotDefinition }) {
+  return <section className="sn-container sn-highlights" aria-label="मुख्य समाचार">{stories.map((story, i) => <div key={story.id}><article className={`sn-highlight ${i < 2 ? 'sn-highlight-divider' : ''}`}>{i === 0 ? <h1><Link href={story.href} prefetch={false}>{story.title}</Link></h1> : <h2><Link href={story.href} prefetch={false}>{story.title}</Link></h2>}<Byline story={story} />{i === 2 && <>{story.image && <Link href={story.href} prefetch={false} className="sn-highlight-image"><StoryImage story={story} /></Link>}<p className="sn-highlight-summary">{story.summary}</p></>}</article>{i === 1 && <div className="sn-headline-ad"><HomepageAd slot={ad} /></div>}</div>)}</section>;
 }

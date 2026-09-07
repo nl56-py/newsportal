@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getAdSlotByPosition } from "@/lib/ads-config";
+import type { AdSlotDefinition } from "@/lib/types";
+import { HomepageAd } from './HomepageAd';
 import { X } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-export const BottomAnchorAd: React.FC = () => {
+export const BottomAnchorAd = ({ slot }: { slot?: AdSlotDefinition }) => {
   const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
-  const slot = getAdSlotByPosition("Bottom_Sticky_Anchor");
 
   useEffect(() => {
     // Check if dismissed in this session
@@ -20,7 +20,7 @@ export const BottomAnchorAd: React.FC = () => {
     }
   }, [slot]);
 
-  if (pathname === '/' || pathname.startsWith('/admin') || !isVisible || !slot?.currentAd?.active) return null;
+  if (pathname.startsWith('/admin') || !isVisible || !slot?.currentAd?.active) return null;
 
   const currentAd = slot.currentAd;
 

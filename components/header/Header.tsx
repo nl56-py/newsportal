@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { HomeStory, homepageBrand, referenceSections } from '@/lib/homepage-content';
 import { NewsList, SourceIcon } from '@/components/home/ReferenceSections';
 import { formatNepaliDateBS } from '@/lib/nepali-utils';
+import { HomepageAd } from '@/components/ads/HomepageAd';
+import type { AdSlotDefinition } from '@/lib/types';
 
 const navigation = [
   ['गृहपृष्ठ', '/'], ['राष्ट्रिय', '/category/province'],
@@ -19,7 +21,7 @@ const extraNavigation = [
   ['विचार/ब्लग', '/category/blog'],
 ];
 
-export function Header({ recent, popular }: { recent?: HomeStory[]; popular?: HomeStory[] }) {
+export function Header({ recent, popular, breaking = [], ad }: { recent?: HomeStory[]; popular?: HomeStory[]; breaking?: HomeStory[]; ad?: AdSlotDefinition }) {
   const pathname = usePathname();
   const [panel, setPanel] = useState<'search' | 'recent' | 'popular' | null>(null);
   const [drawer, setDrawer] = useState(false);
@@ -63,7 +65,7 @@ export function Header({ recent, popular }: { recent?: HomeStory[]; popular?: Ho
   return <header className="sn-header">
     <div className="sn-masthead sn-container">
       <div className="sn-brand"><Link href="/"><img src={homepageBrand.logo} alt="Sawal Nepal" width={320} height={90} /></Link><div className="sn-date">{date || '२१ भाद्र २०८३, आइतबार'}</div></div>
-      <div className="sn-masthead-ad"><img src={homepageBrand.banner} alt="Unicampus Global — Study in Australia" width={640} height={156} /></div>
+      <div className="sn-masthead-ad"><HomepageAd slot={ad} /></div>
     </div>
     <div ref={navRef} className="sn-nav-space">
       <div className={`sn-nav-shell ${sticky ? 'is-sticky' : ''}`}>
@@ -90,7 +92,7 @@ export function Header({ recent, popular }: { recent?: HomeStory[]; popular?: Ho
         </div></section>}
       </div>
     </div>
-    <div className="sn-trending"><span className="sn-trending-label">ट्रेण्डिङ<SourceIcon name="bolt" /></span><div>{['covid19', 'खेलकुद', 'कोरोना संक्रमित', 'मौसम', 'स्वास्थ्य', 'कोरोना', 'corona'].map(tag => <span key={tag}># <Link href={`/search?s=${encodeURIComponent(tag)}`}>#{tag}</Link> </span>)}</div></div>
+    <div className="sn-trending"><span className="sn-trending-label">{breaking.length ? 'ब्रेकिङ' : 'ट्रेण्डिङ'}<SourceIcon name="bolt" /></span><div>{(breaking.length ? breaking : recent || []).slice(0, 8).map(story => <span key={story.id}><Link href={story.href} prefetch={false}>{story.title}</Link>　</span>)}</div></div>
     {drawer && <div className="sn-drawer-layer"><button className="sn-drawer-backdrop" aria-label="Close menu backdrop" onClick={closeDrawer} /><div ref={drawerRef} className="sn-drawer" role="dialog" aria-modal="true" aria-label="नेभिगेसन मेनु"><button className="sn-drawer-close" onClick={closeDrawer} aria-label="Close menu"><SourceIcon name="left" /></button><nav>{[...navigation, ...extraNavigation].map(([label, href]) => <Link key={href} href={href} prefetch={false} onClick={closeDrawer}>{label}</Link>)}</nav></div></div>}
   </header>;
 }

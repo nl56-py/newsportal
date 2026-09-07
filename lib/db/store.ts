@@ -218,6 +218,20 @@ export class JsonDatabase {
     return defaultState;
   }
 
+  // API routes and server-rendered pages can have separate module instances.
+  // Re-read the shared store before operations so a submission is visible to both.
+  private refresh(): void {
+    if (typeof window !== 'undefined') return;
+    const fs = require('fs');
+    const path = require('path');
+    const file = path.join(process.cwd(), 'data', 'portal-db.json');
+    if (!fs.existsSync(file)) return;
+    const state = JSON.parse(fs.readFileSync(file, 'utf8')) as DatabaseState;
+    if (!Array.isArray(state.articles)) throw new Error('Invalid article database');
+    this.state = state;
+    globalDbState = state;
+  }
+
   public save(): void {
     globalDbState = this.state;
     if (typeof window === "undefined") {
@@ -230,14 +244,18 @@ export class JsonDatabase {
         if (!fs.existsSync(DB_DIR)) {
           fs.mkdirSync(DB_DIR, { recursive: true });
         }
-        fs.writeFileSync(DB_FILE, JSON.stringify(this.state, null, 2), "utf-8");
+        const temporary = `${DB_FILE}.${process.pid}.${Date.now()}.tmp`;
+        fs.writeFileSync(temporary, JSON.stringify(this.state, null, 2), "utf-8");
+        fs.renameSync(temporary, DB_FILE);
       } catch (err) {
         console.error("JsonDatabase save error:", err);
+        throw err;
       }
     }
   }
 
   public getState(): DatabaseState {
+    this.refresh();
     return this.state;
   }
 
@@ -255,16 +273,19 @@ export class JsonDatabase {
 
   // --- Articles CRUD ---
   public getArticles(): NewsArticle[] {
+    this.refresh();
     return this.state.articles;
   }
 
   public getArticleById(id: string): NewsArticle | undefined {
+    this.refresh();
     return this.state.articles.find(
       (a) => a.id === id || a.numericId?.toString() === id
     );
   }
 
   public getArticleBySlug(slugOrId: string): NewsArticle | undefined {
+    this.refresh();
     return this.state.articles.find(
       (a) =>
         a.slug === slugOrId ||
@@ -274,6 +295,7 @@ export class JsonDatabase {
   }
 
   public insertArticle(article: NewsArticle): NewsArticle {
+    this.refresh();
     if (article.isLeadStory) {
       this.state.articles.forEach((a) => {
         if (a.id !== article.id) a.isLeadStory = false;
@@ -286,6 +308,7 @@ export class JsonDatabase {
   }
 
   public updateArticle(id: string, updates: Partial<NewsArticle>): NewsArticle | null {
+    this.refresh();
     const idx = this.state.articles.findIndex((a) => a.id === id || a.numericId?.toString() === id);
     if (idx === -1) return null;
 
@@ -305,6 +328,7 @@ export class JsonDatabase {
   }
 
   public deleteArticle(id: string): boolean {
+    this.refresh();
     const initialLen = this.state.articles.length;
     this.state.articles = this.state.articles.filter((a) => a.id !== id && a.numericId?.toString() !== id);
     if (this.state.articles.length !== initialLen) {
@@ -316,10 +340,12 @@ export class JsonDatabase {
 
   // --- Categories CRUD ---
   public getCategories(): CategoryItem[] {
+    this.refresh();
     return this.state.categories || DEFAULT_CATEGORIES;
   }
 
   public insertCategory(cat: CategoryItem): CategoryItem {
+    this.refresh();
     if (!this.state.categories) this.state.categories = [...DEFAULT_CATEGORIES];
     this.state.categories.push(cat);
     this.save();
@@ -327,6 +353,7 @@ export class JsonDatabase {
   }
 
   public updateCategory(id: string, updates: Partial<CategoryItem>): CategoryItem | null {
+    this.refresh();
     if (!this.state.categories) this.state.categories = [...DEFAULT_CATEGORIES];
     const idx = this.state.categories.findIndex((c) => c.id === id || c.slug === id);
     if (idx === -1) return null;
@@ -336,6 +363,7 @@ export class JsonDatabase {
   }
 
   public deleteCategory(id: string): boolean {
+    this.refresh();
     if (!this.state.categories) return false;
     const initial = this.state.categories.length;
     this.state.categories = this.state.categories.filter((c) => c.id !== id && c.slug !== id);
@@ -348,14 +376,17 @@ export class JsonDatabase {
 
   // --- Videos CRUD ---
   public getVideos(): VideoStory[] {
+    this.refresh();
     return this.state.videos || [];
   }
 
   public getVideoById(id: string): VideoStory | undefined {
+    this.refresh();
     return (this.state.videos || []).find((v) => v.id === id);
   }
 
   public insertVideo(video: VideoStory): VideoStory {
+    this.refresh();
     if (!this.state.videos) this.state.videos = [];
     this.state.videos.unshift(video);
     this.save();
@@ -363,6 +394,7 @@ export class JsonDatabase {
   }
 
   public updateVideo(id: string, updates: Partial<VideoStory>): VideoStory | null {
+    this.refresh();
     if (!this.state.videos) return null;
     const idx = this.state.videos.findIndex((v) => v.id === id);
     if (idx === -1) return null;
@@ -376,6 +408,7 @@ export class JsonDatabase {
   }
 
   public deleteVideo(id: string): boolean {
+    this.refresh();
     if (!this.state.videos) return false;
     const initialLen = this.state.videos.length;
     this.state.videos = this.state.videos.filter((v) => v.id !== id);
@@ -388,10 +421,12 @@ export class JsonDatabase {
 
   // --- Ads CRUD & Tracking ---
   public getAds(): { [key: string]: AdSlotDefinition } {
+    this.refresh();
     return this.state.ads;
   }
 
   public updateAdSlot(position: string, updates: Partial<AdSlotDefinition>): AdSlotDefinition | null {
+    this.refresh();
     if (!this.state.ads[position]) return null;
 
     this.state.ads[position] = {
@@ -403,25 +438,30 @@ export class JsonDatabase {
   }
 
   public recordImpression(slotId: string, adId: string): void {
+    this.refresh();
     this.state.analytics.totalImpressions++;
     this.save();
   }
 
   public recordClick(slotId: string, adId: string): void {
+    this.refresh();
     this.state.analytics.totalClicks++;
     this.save();
   }
 
   // --- Breaking News CRUD ---
   public getBreakingNews(): BreakingNewsItem[] {
+    this.refresh();
     return this.state.breakingNews.filter((b) => b.active);
   }
 
   public getAllBreakingNews(): BreakingNewsItem[] {
+    this.refresh();
     return this.state.breakingNews;
   }
 
   public insertBreakingNews(headline: string, linkUrl?: string): BreakingNewsItem {
+    this.refresh();
     const item: BreakingNewsItem = {
       id: `brk-${Date.now()}`,
       headline,
@@ -435,6 +475,7 @@ export class JsonDatabase {
   }
 
   public deleteBreakingNews(id: string): boolean {
+    this.refresh();
     const initialLen = this.state.breakingNews.length;
     this.state.breakingNews = this.state.breakingNews.filter((b) => b.id !== id);
     if (this.state.breakingNews.length !== initialLen) {
@@ -445,6 +486,7 @@ export class JsonDatabase {
   }
 
   public toggleBreakingNews(id: string): boolean {
+    this.refresh();
     const item = this.state.breakingNews.find((b) => b.id === id);
     if (item) {
       item.active = !item.active;
@@ -456,16 +498,19 @@ export class JsonDatabase {
 
   // --- Authors CRUD ---
   public getAuthors(): Author[] {
+    this.refresh();
     return this.state.authors;
   }
 
   public insertAuthor(author: Author): Author {
+    this.refresh();
     this.state.authors.push(author);
     this.save();
     return author;
   }
 
   public updateAuthor(id: string, updates: Partial<Author>): Author | null {
+    this.refresh();
     const idx = this.state.authors.findIndex((a) => a.id === id);
     if (idx === -1) return null;
     this.state.authors[idx] = { ...this.state.authors[idx], ...updates };
@@ -474,6 +519,7 @@ export class JsonDatabase {
   }
 
   public deleteAuthor(id: string): boolean {
+    this.refresh();
     const initial = this.state.authors.length;
     this.state.authors = this.state.authors.filter((a) => a.id !== id);
     if (this.state.authors.length !== initial) {
@@ -485,10 +531,12 @@ export class JsonDatabase {
 
   // --- Site Settings ---
   public getSiteSettings(): SiteSettings {
+    this.refresh();
     return this.state.siteSettings || DEFAULT_SETTINGS;
   }
 
   public updateSiteSettings(settings: Partial<SiteSettings>): SiteSettings {
+    this.refresh();
     this.state.siteSettings = {
       ...this.getSiteSettings(),
       ...settings,
@@ -499,6 +547,7 @@ export class JsonDatabase {
 
   // --- Media Library CRUD ---
   public getMedia(): MediaItem[] {
+    this.refresh();
     if (!this.state.media || this.state.media.length === 0) {
       this.state.media = (this.state.articles || [])
         .filter((a) => a.coverImage && a.coverImage.startsWith("http"))
@@ -519,6 +568,7 @@ export class JsonDatabase {
   }
 
   public insertMedia(item: MediaItem): MediaItem {
+    this.refresh();
     if (!this.state.media) this.state.media = [];
     this.state.media.unshift(item);
     this.save();
@@ -526,6 +576,7 @@ export class JsonDatabase {
   }
 
   public deleteMedia(id: string): boolean {
+    this.refresh();
     if (!this.state.media) return false;
     const initial = this.state.media.length;
     this.state.media = this.state.media.filter((m) => m.id !== id);
@@ -538,9 +589,9 @@ export class JsonDatabase {
 
   // --- Admin Auth ---
   public findAdminByUsername(username: string): AdminUser | undefined {
+    this.refresh();
     return this.state.adminUsers.find((u) => u.username === username);
   }
 }
 
 export const db = JsonDatabase.getInstance();
-
