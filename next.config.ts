@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Output standalone build for CloudLinux / LiteSpeed / DirectAdmin Phusion Passenger
+  // Output standalone build for CloudLinux / LiteSpeed / Phusion Passenger
   output: "standalone",
   distDir: process.env.NEXT_DIST_DIR || ".next",
 
@@ -15,10 +15,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
 
-  // DirectAdmin / Passenger custom port binding support
+  // Site Configuration
   env: {
-    NEXT_PUBLIC_SITE_NAME: "नेपाल पाटी (Nepal Pati)",
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "https://example.com",
+    NEXT_PUBLIC_SITE_NAME: "सवाल नेपाल (Sawal Nepal)",
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "https://beta.sawalnepal.com",
   },
 };
 

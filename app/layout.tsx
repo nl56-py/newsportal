@@ -86,12 +86,12 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const homepage = getHomepageContent();
+  const homepage = await getHomepageContent();
   return (
     <html
       lang="ne"

@@ -8,8 +8,8 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-export default function HomePage() {
-  const { sections: s, provinces, highlights, ads } = getHomepageContent();
+export default async function HomePage() {
+  const { sections: s, provinces, highlights, ads } = await getHomepageContent();
   return (
     <div className="sn-home">
       <HomepageHighlights stories={highlights} ad={ads.Homepage_Mid_Banner} />

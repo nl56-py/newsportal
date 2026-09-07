@@ -5,7 +5,15 @@ import { getLiveWordPressArticles } from "@/lib/db/mysql";
 import fs from "fs";
 import path from "path";
 
+export async function GET(req: NextRequest) {
+  return handleSync();
+}
+
 export async function POST(req: NextRequest) {
+  return handleSync();
+}
+
+async function handleSync() {
   try {
     let articles: any[] = [];
     let source = "export_file";

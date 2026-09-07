@@ -11,40 +11,61 @@ import {
 import {
   MOCK_VIDEOS,
 } from "./mock-data";
+import {
+  getLiveWordPressArticles,
+  getLiveArticleBySlug,
+  getLiveArticlesByCategory as getLiveDbArticlesByCategory,
+  searchLiveWordPressArticles,
+} from "./db/mysql";
 
 /**
  * Category alias mapping for Sawal Nepal URLs and Database entries
  */
 const CATEGORY_ALIASES: { [key: string]: string[] } = {
-  province: ["province", "pradesh", "samachar", "राष्ट्रिय"],
-  samachar: ["samachar", "province", "news", "मुख्य खबर"],
-  international: ["international", "bishwa", "अन्तराष्ट्रिय"],
-  tech: ["tech", "technology", "prawidhi", "सूचना-प्रविधि"],
+  province: ["province", "pradesh", "samachar", "राष्ट्रिय", "प्रदेश", "देश"],
+  pradesh: ["province", "pradesh", "samachar", "राष्ट्रिय", "प्रदेश", "देश"],
+  samachar: ["samachar", "news", "मुख्य खबर", "समाचार"],
+  international: ["international", "bishwa", "अन्तराष्ट्रिय", "अन्तर्राष्ट्रिय", "विश्व"],
+  tech: ["tech", "technology", "prawidhi", "सूचना-प्रविधि", "प्रविधि"],
   politics: ["politics", "rajniti", "राजनीति"],
   rajniti: ["rajniti", "politics", "राजनीति"],
-  economy: ["economy", "artha", "अर्थ"],
-  artha: ["economy", "artha", "अर्थ"],
+  economy: ["economy", "artha", "अर्थ", "अर्थ / बजार"],
+  artha: ["economy", "artha", "अर्थ", "अर्थ / बजार"],
   sports: ["sports", "khelkud", "खेलकुद"],
   khelkud: ["sports", "khelkud", "खेलकुद"],
   entertainment: ["entertainment", "manoranjan", "मनोरञ्जन"],
   manoranjan: ["entertainment", "manoranjan", "मनोरञ्जन"],
-  lifestyle: ["lifestyle", "जीवनशैली"],
+  lifestyle: ["lifestyle", "जीवनशैली", "समाज"],
   health: ["health", "swasthya", "स्वास्थ्य"],
-  "different-world": ["different-world", "anautho", "विचित्र संसार"],
-  religion: ["religion", "dharma", "धर्म संस्कृति"],
+  "different-world": ["different-world", "anautho", "विचित्र संसार", "अनौठा कुरा"],
+  religion: ["religion", "dharma", "धर्म संस्कृति", "धर्म सस्कृति"],
   interview: ["interview", "antarwarta", "अन्तर्वार्ता"],
-  blog: ["blog", "bichar", "विचार/ब्लग"],
-  bichar: ["blog", "bichar", "विचार/ब्लग"],
+  blog: ["blog", "bichar", "विचार/ब्लग", "विचार / ब्लग", "विचार"],
+  bichar: ["blog", "bichar", "विचार/ब्लग", "विचार / ब्लग", "विचार"],
   video: ["video", "multimedia", "भिडियो"],
 };
 
 export async function getLeadStory(): Promise<NewsArticle | null> {
+  try {
+    const live = await getLiveWordPressArticles(10, 0);
+    const lead = live.find((a) => a.isLeadStory);
+    if (lead) return lead;
+    if (live.length > 0) return live[0];
+  } catch (e) {
+    // fallback
+  }
   const articles = db.getArticles();
   const lead = articles.find((a) => a.isLeadStory);
   return lead || articles[0] || null;
 }
 
 export async function getSubLeadStories(limit: number = 3): Promise<NewsArticle[]> {
+  try {
+    const live = await getLiveWordPressArticles(limit + 1, 0);
+    if (live.length > 1) return live.slice(1, limit + 1);
+  } catch (e) {
+    // fallback
+  }
   const articles = db.getArticles();
   const subLeads = articles.filter((a) => a.isSubLead);
   if (subLeads.length > 0) return subLeads.slice(0, limit);
@@ -57,6 +78,12 @@ export async function getBreakingNews(): Promise<string[]> {
 }
 
 export async function getRecentArticles(limit: number = 10): Promise<NewsArticle[]> {
+  try {
+    const live = await getLiveWordPressArticles(limit, 0);
+    if (live.length > 0) return live;
+  } catch (e) {
+    // fallback
+  }
   const articles = db.getArticles();
   return [...articles]
     .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
@@ -64,6 +91,16 @@ export async function getRecentArticles(limit: number = 10): Promise<NewsArticle
 }
 
 export async function getPopularArticles(limit: number = 9): Promise<NewsArticle[]> {
+  try {
+    const live = await getLiveWordPressArticles(30, 0);
+    if (live.length > 0) {
+      return [...live]
+        .sort((a, b) => (b.viewsCount || 0) - (a.viewsCount || 0))
+        .slice(0, limit);
+    }
+  } catch (e) {
+    // fallback
+  }
   const articles = db.getArticles();
   const popular = articles.filter((a) => a.isPopular || a.popularRank);
   if (popular.length > 0) {
@@ -77,10 +114,7 @@ export async function getPopularArticles(limit: number = 9): Promise<NewsArticle
 }
 
 export async function getTrendingArticles(limit: number = 10): Promise<NewsArticle[]> {
-  const articles = db.getArticles();
-  return [...articles]
-    .sort((a, b) => b.viewsCount - a.viewsCount)
-    .slice(0, limit);
+  return getPopularArticles(limit);
 }
 
 export async function getArticlesByCategory(
@@ -88,10 +122,23 @@ export async function getArticlesByCategory(
   limit: number = 10,
   page: number = 1
 ): Promise<{ articles: NewsArticle[]; total: number; totalPages: number }> {
-  const articles = db.getArticles();
   const catKey = category.toLowerCase().trim();
   const validAliases = CATEGORY_ALIASES[catKey] || [catKey];
 
+  // Try querying live MariaDB for category
+  for (const alias of validAliases) {
+    try {
+      const liveRes = await getLiveDbArticlesByCategory(alias, limit, page);
+      if (liveRes.articles.length > 0) {
+        return liveRes;
+      }
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  // Fallback to local DB store
+  const articles = db.getArticles();
   const filtered = articles.filter((a) => {
     const articleCat = a.category.toLowerCase().trim();
     const articleCatName = a.categoryName.toLowerCase().trim();
@@ -115,12 +162,31 @@ export async function getArticlesByProvince(
   provinceId: ProvinceId | string,
   limit: number = 6
 ): Promise<NewsArticle[]> {
+  try {
+    const live = await getLiveWordPressArticles(60, 0);
+    const matches = live.filter((a) => a.provinceId === provinceId);
+    if (matches.length > 0) return matches.slice(0, limit);
+    if (live.length > 0) return live.slice(0, limit);
+  } catch (e) {
+    // fallback
+  }
+
   const articles = db.getArticles();
   const matches = articles.filter((a) => a.provinceId === provinceId);
   return matches.length > 0 ? matches.slice(0, limit) : articles.slice(0, limit);
 }
 
 export async function getArticleBySlug(slugOrId: string): Promise<NewsArticle | null> {
+  // 1. Try Live MariaDB
+  try {
+    const cleanSlug = slugOrId.replace(/^wp-/, "");
+    const liveArticle = await getLiveArticleBySlug(cleanSlug);
+    if (liveArticle) return liveArticle;
+  } catch (e) {
+    console.warn("Live DB getArticleBySlug error:", e);
+  }
+
+  // 2. Try Local Store
   const article = db.getArticleBySlug(slugOrId);
   if (article) {
     db.updateArticle(article.id, { viewsCount: (article.viewsCount || 0) + 1 });
@@ -133,15 +199,17 @@ export async function getRelatedArticles(
   article: NewsArticle,
   limit: number = 4
 ): Promise<NewsArticle[]> {
-  const articles = db.getArticles();
-  if (article.relatedArticleSlugs && article.relatedArticleSlugs.length > 0) {
-    const related = articles.filter((a) =>
-      article.relatedArticleSlugs?.includes(a.slug)
-    );
+  try {
+    const catArticles = await getArticlesByCategory(article.category, limit + 1, 1);
+    const related = catArticles.articles.filter((a) => a.id !== article.id && a.slug !== article.slug);
     if (related.length > 0) return related.slice(0, limit);
+  } catch (e) {
+    // fallback
   }
+
+  const articles = db.getArticles();
   return articles
-    .filter((a) => a.id !== article.id)
+    .filter((a) => a.id !== article.id && a.slug !== article.slug)
     .slice(0, limit);
 }
 
@@ -150,6 +218,15 @@ export async function searchArticles(
   from?: string,
   to?: string
 ): Promise<NewsArticle[]> {
+  if (query) {
+    try {
+      const live = await searchLiveWordPressArticles(query, 30);
+      if (live.length > 0) return live;
+    } catch (e) {
+      // fallback
+    }
+  }
+
   const articles = db.getArticles();
   if (!query && !from && !to) return articles;
 
@@ -162,7 +239,6 @@ export async function searchArticles(
       (a.tags && a.tags.some((t) => t.toLowerCase().includes(q))) ||
       (a.author && a.author.name.toLowerCase().includes(q));
 
-    // Native date inputs use YYYY-MM-DD; interpret the full day in Nepal time.
     const published = Date.parse(a.publishedAt);
     const start = from && /^\d{4}-\d{2}-\d{2}$/.test(from) ? Date.parse(`${from}T00:00:00+05:45`) : NaN;
     const end = to && /^\d{4}-\d{2}-\d{2}$/.test(to) ? Date.parse(`${to}T23:59:59.999+05:45`) : NaN;
