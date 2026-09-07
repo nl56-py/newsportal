@@ -11,8 +11,8 @@ SetEnv PORT 3000
 SetEnv NODE_ENV production
 SetEnv DB_HOST localhost
 SetEnv DB_NAME sawalne1_db1
-SetEnv DB_USER sawalne1_db1
-SetEnv DB_PASSWORD Damak123@#
+SetEnv DB_USER sawalne1_beta
+SetEnv DB_PASSWORD Damak123@#Beta!
 SetEnv DB_PREFIX YVbSX5aUsA_
 SetEnv NEXT_PUBLIC_SITE_URL https://beta.sawalnepal.com
 </IfModule>

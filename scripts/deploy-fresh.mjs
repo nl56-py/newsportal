@@ -210,7 +210,20 @@ async function main() {
   );
   console.log('Extract result:', extractRes?.cpanelresult?.data || extractRes);
 
-  console.log('🔄 Restarting Phusion Passenger via tmp/restart.txt...');
+  console.log('🔄 Recycling Passenger processes...');
+  await cpanelExec(
+    securityToken,
+    cookieHeader,
+    `/execute/PassengerApps/disable_application?name=Sawal%20Nepal%20Beta`
+  );
+  await new Promise(r => setTimeout(r, 1000));
+  await cpanelExec(
+    securityToken,
+    cookieHeader,
+    `/execute/PassengerApps/enable_application?name=Sawal%20Nepal%20Beta`
+  );
+
+  console.log('🔄 Touching tmp/restart.txt...');
   const restartRes = await cpanelExec(
     securityToken,
     cookieHeader,

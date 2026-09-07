@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { selectHomepageContent } from "./homepage-selection";
-import { getLiveWordPressArticles } from "./db/mysql";
+import { getLiveHomepageArticles } from "./db/mysql";
 import { NewsArticle } from "./types";
 
 /**
@@ -11,9 +11,8 @@ export async function getHomepageContent() {
   
   let articles: NewsArticle[] = state.articles || [];
   try {
-    const live = await getLiveWordPressArticles(100, 0);
+    const live = await getLiveHomepageArticles();
     if (live && live.length > 0) {
-      // Live database articles take priority for fresh content
       articles = live;
     }
   } catch (err) {

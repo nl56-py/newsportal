@@ -1,5 +1,5 @@
 import type { NewsArticle, VideoStory } from './types';
-import { localAsset, sectionSlugs, type HomeStory } from './homepage-content';
+import { localAsset, sectionSlugs, referenceSections, referenceProvinces, type HomeStory } from './homepage-content';
 
 const aliases: Record<string, string> = {
   rajniti: 'politics', politics: 'politics', 'राजनीति': 'politics',
@@ -68,7 +68,13 @@ export function selectHomepageContent(input: NewsArticle[], videos: VideoStory[]
       case 'फिचर': selected = unique([...articles.filter(a => a.isTrending || category(a) === 'feature'), ...articles]); break;
       default: selected = articles.filter(a => category(a) === sectionSlugs[title]);
     }
-    sections[title] = selected.slice(0, limit).map(story);
+    const liveStories = selected.slice(0, limit).map(story);
+    const refStories = referenceSections[title] || [];
+    const needed = limit - liveStories.length;
+    const backfill = needed > 0
+      ? refStories.filter(r => !liveStories.some(l => l.title === r.title || l.id === r.id)).slice(0, needed)
+      : [];
+    sections[title] = [...liveStories, ...backfill];
   }
   // The video admin stores newest submissions first.
   sections['भिडियो'] = [...videos.map(video => ({
@@ -79,9 +85,20 @@ export function selectHomepageContent(input: NewsArticle[], videos: VideoStory[]
     summary: '',
     date: video.publishedAtBS,
   })), ...sections['भिडियो']].slice(0, 8);
-  const provinces: Record<string, HomeStory[]> = { all__province: national.slice(0, 9).map(story) };
+
+  const allRefProv = referenceProvinces['all__province'] || [];
+  const provinces: Record<string, HomeStory[]> = {
+    all__province: national.length > 0
+      ? [...national.slice(0, 9).map(story), ...allRefProv.filter(r => !national.some(n => n.title === r.title)).slice(0, Math.max(0, 9 - national.length))]
+      : allRefProv.slice(0, 9),
+  };
   provinceIds.forEach((id, i) => {
-    provinces[`province__${i + 1}`] = articles.filter(a => a.provinceId === id).slice(0, 9).map(story);
+    const key = `province__${i + 1}`;
+    const liveProv = articles.filter(a => a.provinceId === id).slice(0, 9).map(story);
+    const refProv = referenceProvinces[key] || [];
+    const needed = 9 - liveProv.length;
+    const backfill = needed > 0 ? refProv.filter(r => !liveProv.some(l => l.title === r.title)).slice(0, needed) : [];
+    provinces[key] = [...liveProv, ...backfill];
   });
   return {
     sections,

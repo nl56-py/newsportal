@@ -15,8 +15,8 @@ process.env.PORT = process.env.PORT || 3000;
 
 // Set default live MariaDB connection params if not in environment
 process.env.DB_HOST = process.env.DB_HOST || "localhost";
-process.env.DB_USER = process.env.DB_USER || "sawalne1_db1";
-process.env.DB_PASSWORD = process.env.DB_PASSWORD || "Damak123@#";
+process.env.DB_USER = "sawalne1_beta";
+process.env.DB_PASSWORD = "Damak123@#Beta!";
 process.env.DB_NAME = process.env.DB_NAME || "sawalne1_db1";
 process.env.DB_PORT = process.env.DB_PORT || "3306";
 process.env.DB_PREFIX = process.env.DB_PREFIX || "YVbSX5aUsA_";

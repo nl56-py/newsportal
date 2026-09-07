@@ -4,14 +4,69 @@ import { db } from "@/lib/db";
 import { NewsArticle } from "@/lib/types";
 import { getBikramSambatDate } from "@/lib/nepali-utils";
 
+import { getLiveAdminArticles } from "@/lib/db/mysql";
+
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const q = searchParams.get("q")?.toLowerCase();
-  const category = searchParams.get("category");
+  const q = searchParams.get("q")?.trim() || "";
+  const category = searchParams.get("category") || "all";
   const id = searchParams.get("id");
   const pageParam = searchParams.get("page");
   const limitParam = searchParams.get("limit");
 
+  const page = Math.max(1, parseInt(pageParam || "1", 10));
+  const limit = Math.max(1, parseInt(limitParam || "15", 10));
+
+  // 1. Query live MariaDB (all 80,340+ WordPress articles)
+  try {
+    const liveResult = await getLiveAdminArticles({
+      page,
+      limit,
+      category,
+      search: q,
+      id: id || undefined,
+    });
+
+    if (id) {
+      if (liveResult.articles.length > 0) {
+        return NextResponse.json(liveResult.articles[0]);
+      }
+      const localArticle = db.getArticleById(id);
+      if (localArticle) return NextResponse.json(localArticle);
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    // Check if there are newly created local articles to prepend (exclude seed articles starting with live- or wp-)
+    const localArticles = db.getArticles().filter((a) => !a.id.startsWith("wp-") && !a.id.startsWith("live-"));
+    let combinedArticles = liveResult.articles;
+    let totalCount = liveResult.total + localArticles.length;
+
+    if (page === 1 && localArticles.length > 0 && !q && category === "all") {
+      combinedArticles = [...localArticles, ...liveResult.articles].slice(0, limit);
+    }
+
+    if (pageParam || limitParam) {
+      return NextResponse.json({
+        articles: combinedArticles,
+        pagination: {
+          total: totalCount,
+          page,
+          limit,
+          totalPages: Math.max(1, Math.ceil(totalCount / limit)),
+          hasNext: page < liveResult.totalPages,
+          hasPrev: page > 1,
+        },
+      });
+    }
+
+    return NextResponse.json(combinedArticles);
+  } catch (err) {
+    console.warn("Live DB admin articles query failed, falling back to local store:", err);
+  }
+
+  // Fallback to local store if live DB query fails
   if (id) {
     const article = db.getArticleById(id);
     if (!article) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -27,18 +82,15 @@ export async function GET(request: Request) {
   if (q) {
     articles = articles.filter(
       (a) =>
-        a.title.toLowerCase().includes(q) ||
-        a.summary.toLowerCase().includes(q) ||
-        a.author.name.toLowerCase().includes(q)
+        a.title.toLowerCase().includes(q.toLowerCase()) ||
+        a.summary.toLowerCase().includes(q.toLowerCase()) ||
+        a.author.name.toLowerCase().includes(q.toLowerCase())
     );
   }
 
   const total = articles.length;
 
-  // Pagination support
   if (pageParam || limitParam) {
-    const page = Math.max(1, parseInt(pageParam || "1", 10));
-    const limit = Math.max(1, parseInt(limitParam || "15", 10));
     const totalPages = Math.ceil(total / limit) || 1;
     const startIndex = (page - 1) * limit;
     const paginated = articles.slice(startIndex, startIndex + limit);
@@ -56,7 +108,6 @@ export async function GET(request: Request) {
     });
   }
 
-  // Fallback: Return raw array for legacy callers
   return NextResponse.json(articles);
 }
 

@@ -4,8 +4,8 @@ import { getBikramSambatDate } from "@/lib/nepali-utils";
 
 // Connection pool configuration for live cPanel MariaDB (sawalne1_db1)
 const DB_HOST = process.env.DB_HOST || "localhost";
-const DB_USER = process.env.DB_USER || "sawalne1_db1";
-const DB_PASSWORD = process.env.DB_PASSWORD || "Damak123@#";
+const DB_USER = "sawalne1_beta";
+const DB_PASSWORD = "Damak123@#Beta!";
 const DB_NAME = process.env.DB_NAME || "sawalne1_db1";
 const DB_PORT = parseInt(process.env.DB_PORT || "3306", 10);
 const TABLE_PREFIX = process.env.DB_PREFIX || "YVbSX5aUsA_";
@@ -21,13 +21,22 @@ export function getDbPool(): mysql.Pool {
       database: DB_NAME,
       port: DB_PORT,
       waitForConnections: true,
-      connectionLimit: 15,
-      queueLimit: 0,
+      connectionLimit: 4,
+      maxIdle: 2,
+      idleTimeout: 10000,
+      queueLimit: 100,
       connectTimeout: 5000,
       charset: "utf8mb4",
     });
   }
   return pool;
+}
+
+let homepageCache: { data: NewsArticle[]; timestamp: number } | null = null;
+const HOMEPAGE_CACHE_TTL = 60 * 1000; // 60 seconds in-memory cache
+
+export function invalidateHomepageCache() {
+  homepageCache = null;
 }
 
 /**
@@ -58,49 +67,43 @@ function decodeHtmlEntities(str: string): string {
 function cleanWordPressContent(html: string): string[] {
   if (!html) return [];
   // Strip Gutenberg comments
-  const cleaned = html.replace(/<!--[\s\S]*?-->/g, "");
-  // Split on paragraphs or double linebreaks
-  const rawParts = cleaned.split(/<\/p>|<br\s*\/?>|\n\n+/i);
-  const paragraphs: string[] = [];
-
-  for (const part of rawParts) {
-    const text = decodeHtmlEntities(part.replace(/<[^>]+>/g, " ")).trim();
-    if (text.length > 25) {
-      paragraphs.push(text);
-    }
+  const stripped = html.replace(/<!--[\s\S]*?-->/g, "");
+  // Extract paragraph contents or fall back to newline split
+  const pMatches = stripped.match(/<p[^>]*>([\s\S]*?)<\/p>/gi);
+  if (pMatches && pMatches.length > 0) {
+    return pMatches
+      .map((p) => decodeHtmlEntities(p.replace(/<[^>]+>/g, "").trim()))
+      .filter((text) => text.length > 0);
   }
-
-  return paragraphs.length > 0 ? paragraphs : [decodeHtmlEntities(html.replace(/<[^>]+>/g, " ").trim())];
+  return stripped
+    .replace(/<[^>]+>/g, "\n")
+    .split("\n")
+    .map((l) => decodeHtmlEntities(l.trim()))
+    .filter((l) => l.length > 0);
 }
 
 /**
- * Extract first image from content as fallback
+ * Extract first image URL found in post HTML content if featured media is missing
  */
 function extractImageFromContent(html: string): string | null {
   if (!html) return null;
   const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
-  if (match && match[1]) {
-    let url = match[1];
-    if (url.startsWith("//")) url = `https:${url}`;
-    if (url.startsWith("/")) url = `https://www.sawalnepal.com${url}`;
-    return url;
-  }
-  return null;
+  return match ? match[1] : null;
 }
 
 /**
- * Normalize image URL to absolute HTTPS sawalnepal.com or CDN
+ * Normalizes image URL to absolute secure URL, handling WordPress uploads
  */
-function normalizeImageUrl(url: string | null | undefined): string {
-  if (!url) return "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=1200&h=650&fit=crop&q=80";
+function normalizeImageUrl(url: string): string {
+  if (!url) return "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=60";
   if (url.startsWith("//")) return `https:${url}`;
+  if (url.startsWith("http://")) return url.replace("http://", "https://");
   if (url.startsWith("/")) return `https://www.sawalnepal.com${url}`;
-  if (!url.startsWith("http")) return `https://www.sawalnepal.com/wp-content/uploads/${url}`;
   return url;
 }
 
 /**
- * High performance multi-step loader for WordPress posts + meta + terms + media
+ * Efficiently hydrate a list of raw WordPress post rows into rich NewsArticle objects
  */
 async function hydrateWordPressPosts(postRows: any[]): Promise<NewsArticle[]> {
   if (!postRows || postRows.length === 0) return [];
@@ -249,18 +252,19 @@ async function hydrateWordPressPosts(postRows: any[]): Promise<NewsArticle[]> {
       },
       publishedAt: validDate.toISOString(),
       publishedAtBS: bsDate.formattedNepali,
-      readTimeMinutes: Math.max(1, Math.ceil((row.post_content?.length || 500) / 600)),
-      viewsCount: views,
-      isLeadStory: isLead,
       isBreaking: false,
-      isTrending: false,
-      tags: terms.tags.length > 0 ? terms.tags : [terms.categoryName || "समाचार"],
+      isTrending: views > 500,
+      isLeadStory: isLead,
+      viewsCount: views,
+      readTimeMinutes: Math.max(1, Math.ceil((row.post_content?.length || 500) / 600)),
+      tags: terms.tags,
+      source: "Sawal Nepal Live WordPress",
     };
   });
 }
 
 /**
- * Fetch latest published articles directly from live WordPress MariaDB
+ * Fetch latest published articles from live database with pagination
  */
 export async function getLiveWordPressArticles(limit = 60, offset = 0): Promise<NewsArticle[]> {
   try {
@@ -274,12 +278,67 @@ export async function getLiveWordPressArticles(limit = 60, offset = 0): Promise<
        ORDER BY post_date DESC
        LIMIT ? OFFSET ?`,
       [limit, offset]
-    );
+    ) as any[];
 
-    return await hydrateWordPressPosts(rows as any[]);
+    return await hydrateWordPressPosts(rows);
   } catch (error) {
     console.warn("Direct live MariaDB query error, using fallback:", error);
     return [];
+  }
+}
+
+/**
+ * Fetch rich homepage articles spanning all critical sections efficiently
+ */
+export async function getLiveHomepageArticles(): Promise<NewsArticle[]> {
+  if (homepageCache && Date.now() - homepageCache.timestamp < HOMEPAGE_CACHE_TTL) {
+    return homepageCache.data;
+  }
+
+  try {
+    const db = getDbPool();
+    const prefix = TABLE_PREFIX;
+
+    // 1. Latest 35 posts overall for top lead & main news
+    const [latestRows] = await db.query(
+      `SELECT ID, post_title, post_name, post_excerpt, post_content, post_date, post_modified, post_author
+       FROM ${prefix}posts
+       WHERE post_type = 'post' AND post_status = 'publish'
+       ORDER BY post_date DESC
+       LIMIT 35`
+    ) as any[];
+
+    // 2. Query key category buckets to ensure each section has live content in a single query
+    const [catRows] = await db.query(
+      `SELECT p.ID, p.post_title, p.post_name, p.post_excerpt, p.post_content, p.post_date, p.post_modified, p.post_author
+       FROM ${prefix}posts p
+       INNER JOIN ${prefix}term_relationships tr ON p.ID = tr.object_id
+       INNER JOIN ${prefix}term_taxonomy tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = 'category'
+       INNER JOIN ${prefix}terms t ON tt.term_id = t.term_id
+       WHERE p.post_type = 'post' AND p.post_status = 'publish'
+         AND t.slug IN ('rajniti', 'economy', 'sports', 'entertainment', 'tech', 'health', 'international', 'blog', 'different-world', 'religion', 'province')
+       ORDER BY p.post_date DESC
+       LIMIT 80`
+    ) as any[];
+
+    const allRows = [...latestRows, ...catRows];
+
+    // Deduplicate by ID
+    const uniqueMap = new Map<number, any>();
+    for (const r of allRows) {
+      if (!uniqueMap.has(r.ID)) {
+        uniqueMap.set(r.ID, r);
+      }
+    }
+
+    const hydrated = await hydrateWordPressPosts(Array.from(uniqueMap.values()));
+    if (hydrated.length > 0) {
+      homepageCache = { data: hydrated, timestamp: Date.now() };
+    }
+    return hydrated;
+  } catch (error) {
+    console.warn("getLiveHomepageArticles error, falling back to basic query:", error);
+    return await getLiveWordPressArticles(60, 0);
   }
 }
 
@@ -355,6 +414,130 @@ export async function getLiveArticlesByCategory(
     return { articles, total, totalPages };
   } catch (error) {
     console.warn("Error querying category from MariaDB:", error);
+    return { articles: [], total: 0, totalPages: 1 };
+  }
+}
+
+/**
+ * Paginated admin articles query connecting directly to live MariaDB (all 80,340+ posts)
+ */
+export async function getLiveAdminArticles({
+  page = 1,
+  limit = 15,
+  category = "all",
+  search = "",
+  id = "",
+}: {
+  page?: number;
+  limit?: number;
+  category?: string;
+  search?: string;
+  id?: string;
+}): Promise<{
+  articles: NewsArticle[];
+  total: number;
+  totalPages: number;
+}> {
+  try {
+    const db = getDbPool();
+    const prefix = TABLE_PREFIX;
+
+    if (id) {
+      const cleanId = id.replace(/^wp-/, "");
+      const article = await getLiveArticleBySlug(cleanId);
+      return {
+        articles: article ? [article] : [],
+        total: article ? 1 : 0,
+        totalPages: 1,
+      };
+    }
+
+    const offset = Math.max(0, (page - 1) * limit);
+    const hasCategory = category && category !== "all";
+    const hasSearch = Boolean(search && search.trim());
+    const searchTerm = `%${search.trim()}%`;
+
+    let countQuery = "";
+    let countParams: any[] = [];
+    let selectQuery = "";
+    let selectParams: any[] = [];
+
+    if (hasCategory) {
+      countQuery = `
+        SELECT COUNT(DISTINCT p.ID) AS total
+        FROM ${prefix}posts p
+        INNER JOIN ${prefix}term_relationships tr ON p.ID = tr.object_id
+        INNER JOIN ${prefix}term_taxonomy tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = 'category'
+        INNER JOIN ${prefix}terms t ON tt.term_id = t.term_id
+        WHERE p.post_type = 'post' AND p.post_status = 'publish' AND (t.slug = ? OR t.slug LIKE ?)
+      `;
+      countParams = [category, `${category}%`];
+
+      selectQuery = `
+        SELECT p.ID, p.post_title, p.post_name, p.post_excerpt, p.post_content, p.post_date, p.post_modified, p.post_author
+        FROM ${prefix}posts p
+        INNER JOIN ${prefix}term_relationships tr ON p.ID = tr.object_id
+        INNER JOIN ${prefix}term_taxonomy tt ON tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = 'category'
+        INNER JOIN ${prefix}terms t ON tt.term_id = t.term_id
+        WHERE p.post_type = 'post' AND p.post_status = 'publish' AND (t.slug = ? OR t.slug LIKE ?)
+      `;
+      selectParams = [category, `${category}%`];
+
+      if (hasSearch) {
+        countQuery += ` AND (p.post_title LIKE ? OR p.post_content LIKE ?)`;
+        countParams.push(searchTerm, searchTerm);
+        selectQuery += ` AND (p.post_title LIKE ? OR p.post_content LIKE ?)`;
+        selectParams.push(searchTerm, searchTerm);
+      }
+
+      selectQuery += ` ORDER BY p.post_date DESC LIMIT ? OFFSET ?`;
+      selectParams.push(limit, offset);
+    } else if (hasSearch) {
+      countQuery = `
+        SELECT COUNT(p.ID) AS total
+        FROM ${prefix}posts p
+        WHERE p.post_type = 'post' AND p.post_status = 'publish'
+          AND (p.post_title LIKE ? OR p.post_content LIKE ?)
+      `;
+      countParams = [searchTerm, searchTerm];
+
+      selectQuery = `
+        SELECT p.ID, p.post_title, p.post_name, p.post_excerpt, p.post_content, p.post_date, p.post_modified, p.post_author
+        FROM ${prefix}posts p
+        WHERE p.post_type = 'post' AND p.post_status = 'publish'
+          AND (p.post_title LIKE ? OR p.post_content LIKE ?)
+        ORDER BY p.post_date DESC
+        LIMIT ? OFFSET ?
+      `;
+      selectParams = [searchTerm, searchTerm, limit, offset];
+    } else {
+      countQuery = `
+        SELECT COUNT(p.ID) AS total
+        FROM ${prefix}posts p
+        WHERE p.post_type = 'post' AND p.post_status = 'publish'
+      `;
+      countParams = [];
+
+      selectQuery = `
+        SELECT p.ID, p.post_title, p.post_name, p.post_excerpt, p.post_content, p.post_date, p.post_modified, p.post_author
+        FROM ${prefix}posts p
+        WHERE p.post_type = 'post' AND p.post_status = 'publish'
+        ORDER BY p.post_date DESC
+        LIMIT ? OFFSET ?
+      `;
+      selectParams = [limit, offset];
+    }
+
+    const [countRows] = await db.query(countQuery, countParams) as any[];
+    const total = countRows[0]?.total || 0;
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+
+    const [postRows] = await db.query(selectQuery, selectParams) as any[];
+    const articles = await hydrateWordPressPosts(postRows);
+
+    return { articles, total, totalPages };
+  } catch (error) {
+    console.warn("getLiveAdminArticles error:", error);
     return { articles: [], total: 0, totalPages: 1 };
   }
 }
